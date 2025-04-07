@@ -52,4 +52,9 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) {
+        return userRepository.findByUsernameAndPasswordHash(username, password);
+    }
 }
