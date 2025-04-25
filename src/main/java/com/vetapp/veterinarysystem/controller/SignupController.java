@@ -29,10 +29,10 @@ public class SignupController {
         try {
             User user = new User();
             user.setUsername(username);
-            user.setPasswordHash(password); // İleride hash'leme eklersin
+            user.setPasswordHash(password);
             user.setEmail(email);
             user.setPhone(phone);
-            user.setRoleId(1); // Default rol (örneğin "Client")
+            user.setRoleId(1);
 
             userService.createUser(user);
             return "redirect:/login";

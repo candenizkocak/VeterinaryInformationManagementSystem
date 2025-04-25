@@ -14,15 +14,10 @@
     <p style="color: red;">${error}</p>
 </c:if>
 
-<form method="post" action="/login">
-    <label>Username:</label>
-    <input type="text" name="username" required/><br><br>
-
-    <label>Password:</label>
-    <input type="password" name="password" required/><br><br>
-
-    <input type="submit" value="Login"/>
+<form action="/perform_login" method="post">
+    <input type="text" name="username" placeholder="Username" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Login</button>
 </form>
-
 </body>
 </html>

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "Users") // dikkat büyük harf!
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,17 +14,25 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "UserID")
     private int userID;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "Username", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "PasswordHash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Column(name = "Email")
     private String email;
+
+    @Column(name = "Phone")
     private String phone;
 
     @Column(name = "RoleID")
     private int roleId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "RoleID", insertable = false, updatable = false)
+    private Role role;
 }
