@@ -37,7 +37,28 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
-    public void deleteClinic(int id) {
+    public Clinic getClinicById(Long id) {
+        return clinicRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Clinic not found with ID: " + id));
+    }
+
+    @Override
+    public Clinic updateClinic(ClinicDto clinicDto) {
+        Clinic clinic = clinicRepository.findById(clinicDto.getClinicId())
+                .orElseThrow(() -> new RuntimeException("Clinic not found with ID: " + clinicDto.getClinicId()));
+
+        User user = userRepository.findById(clinicDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        clinic.setClinicName(clinicDto.getClinicName());
+        clinic.setLocation(clinicDto.getLocation());
+        clinic.setUser(user);
+
+        return clinicRepository.save(clinic);
+    }
+
+    @Override
+    public void deleteClinic(Long id) {
         clinicRepository.deleteById(id);
     }
 }

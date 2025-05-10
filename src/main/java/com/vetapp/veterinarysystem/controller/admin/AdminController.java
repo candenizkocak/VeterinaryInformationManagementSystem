@@ -1,4 +1,4 @@
-package com.vetapp.veterinarysystem.controller;
+package com.vetapp.veterinarysystem.controller.admin;
 
 import com.vetapp.veterinarysystem.model.Role;
 import com.vetapp.veterinarysystem.model.User;
@@ -47,8 +47,30 @@ public class AdminController {
     }
 
     @PostMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable int id) {
+    public String deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return "redirect:/admin/users";
     }
+    @GetMapping("/users/edit/{id}")
+    public String editUserForm(@PathVariable Long id, Model model) {
+        User user = userService.getUserById(id);
+        List<Role> roles = roleRepository.findAll();
+        model.addAttribute("user", user);
+        model.addAttribute("roles", roles);
+        return "admin/edit_user";
+    }
+
+    @PostMapping("/users/update")
+    public String updateUser(@ModelAttribute User user, @RequestParam(required = false) String newPassword) {
+        if (newPassword != null && !newPassword.isBlank()) {
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
+        } else {
+            User existing = userService.getUserById(user.getUserID());
+            user.setPasswordHash(existing.getPasswordHash());
+        }
+
+        userService.updateUser(user.getUserID(), user);
+        return "redirect:/admin/users";
+    }
+
 }

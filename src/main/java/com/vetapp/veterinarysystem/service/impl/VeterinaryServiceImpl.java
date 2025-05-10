@@ -46,12 +46,29 @@ public class VeterinaryServiceImpl implements VeterinaryService {
         return modelMapper.map(veterinary, VeterinaryDto.class);
     }
 
+    //@Override
+    //public List<VeterinaryDto> getAllVeterinaries() {
+    //    return veterinaryRepository.findAll().stream()
+    //            .map(veterinary -> modelMapper.map(veterinary, VeterinaryDto.class))
+    //            .collect(Collectors.toList());
+    //}
+
     @Override
     public List<VeterinaryDto> getAllVeterinaries() {
         return veterinaryRepository.findAll().stream()
-                .map(veterinary -> modelMapper.map(veterinary, VeterinaryDto.class))
+                .map(vet -> {
+                    VeterinaryDto dto = modelMapper.map(vet, VeterinaryDto.class);
+                    dto.setUsername(vet.getUser().getUsername()); // emir bu satır username çekmek için gerekli bir sıkıntı olursa düzeltiriz senin kodunu yorum olarak bıraktım
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Veterinary> getAllVeterinaryEntities() {
+        return veterinaryRepository.findAll();
+    }
+
 
     @Override
     public VeterinaryDto updateVeterinary(Long id, VeterinaryDto veterinaryDto) {
@@ -66,5 +83,21 @@ public class VeterinaryServiceImpl implements VeterinaryService {
     @Override
     public ResponseEntity<?> login(String username, String password) {
         return null;
+    }
+
+    @Override
+    public Veterinary createVeterinaryFromEntity(Veterinary veterinary) {
+        return veterinaryRepository.save(veterinary);
+    }
+
+    @Override
+    public Veterinary getVeterinaryEntityById(Long id) {
+        return veterinaryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veterinary not found"));
+    }
+
+    @Override
+    public Veterinary updateVeterinaryEntity(Veterinary veterinary) {
+        return veterinaryRepository.save(veterinary);
     }
 }

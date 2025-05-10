@@ -40,4 +40,8 @@ public class Pet {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "GenderID", nullable = false)
     private Gender gender;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ClinicID")
+    private Clinic clinic;
 }

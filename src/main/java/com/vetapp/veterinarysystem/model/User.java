@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Users") // dikkat büyük harf!
+@Table(name = "Users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserID")
-    private int userID;
+    private long userID;
 
     @Column(name = "Username", nullable = false, unique = true)
     private String username;

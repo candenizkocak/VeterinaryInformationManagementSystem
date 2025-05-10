@@ -13,7 +13,9 @@
                 <div class="card-body">
                     <p class="card-text">Manage system users and clinics.</p>
                     <a href="/admin/users" class="btn btn-primary me-2">Manage Users</a>
-                    <a href="/admin/clinics" class="btn btn-secondary">Manage Clinics</a>
+                    <a href="/admin/clinics" class="btn btn-secondary me-2">Manage Clinics</a>
+                    <a href="/admin/veterinaries" class="btn btn-primary me-2">Manage Veterinaries</a>
+                    <a href="/admin/pets" class="btn btn-secondary me-2">Manage Pets</a>
                 </div>
             </div>
         </c:when>

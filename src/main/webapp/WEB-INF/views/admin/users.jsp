@@ -44,7 +44,11 @@
         </div>
     </form>
 
-    <table class="table table-bordered table-striped">
+    <div class="mb-3">
+        <input type="text" id="userSearch" class="form-control" placeholder="Search by username...">
+    </div>
+
+    <table class="table table-bordered table-striped" id="userTable">
         <thead class="table-dark">
         <tr>
             <th>ID</th>
@@ -55,7 +59,7 @@
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="userTableBody">
         <c:forEach var="user" items="${users}">
             <tr>
                 <td>${user.userID}</td>
@@ -64,6 +68,7 @@
                 <td>${user.phone}</td>
                 <td>${user.role.roleName}</td>
                 <td>
+                    <a href="/admin/users/edit/${user.userID}" class="btn btn-sm btn-warning">Edit</a>
                     <form action="/admin/users/delete/${user.userID}" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
@@ -72,6 +77,63 @@
         </c:forEach>
         </tbody>
     </table>
+
+    <div id="noResults" class="alert alert-warning d-none">No matching users found.</div>
+
+    <div class="mt-3">
+        <button id="prevPage" class="btn btn-secondary btn-sm">Previous</button>
+        <button id="nextPage" class="btn btn-secondary btn-sm">Next</button>
+    </div>
 </div>
+
+<script>
+    const searchInput = document.getElementById("userSearch");
+    const tableBody = document.getElementById("userTableBody");
+    const rows = Array.from(tableBody.querySelectorAll("tr"));
+    const rowsPerPage = 100;
+    const noResults = document.getElementById("noResults");
+    let currentPage = 1;
+
+    function renderTable(filtered) {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginated = filtered.slice(start, end);
+
+        tableBody.innerHTML = "";
+        paginated.forEach(row => tableBody.appendChild(row));
+        noResults.classList.toggle("d-none", filtered.length > 0);
+    }
+
+    function updateTable() {
+        const query = searchInput.value.toLowerCase();
+        const filtered = rows.filter(row =>
+            row.cells[1].textContent.toLowerCase().includes(query)
+        );
+        currentPage = 1;
+        renderTable(filtered);
+    }
+
+    document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateTable();
+        }
+    });
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+        const query = searchInput.value.toLowerCase();
+        const filtered = rows.filter(row =>
+            row.cells[1].textContent.toLowerCase().includes(query)
+        );
+        const maxPage = Math.ceil(filtered.length / rowsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            renderTable(filtered);
+        }
+    });
+
+    searchInput.addEventListener("keyup", updateTable);
+    renderTable(rows);
+</script>
 </body>
 </html>

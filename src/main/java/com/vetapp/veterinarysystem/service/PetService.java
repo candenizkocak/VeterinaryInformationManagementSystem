@@ -1,24 +1,15 @@
-
-
-
-
-
-
-
-
-/*******DEEPSEEK*********
-// PetService.java
 package com.vetapp.veterinarysystem.service;
 
 import com.vetapp.veterinarysystem.model.Pet;
+
 import java.util.List;
-import java.util.Optional;
 
 public interface PetService {
-    List<Pet> findAll();
-    Optional<Pet> findById(Long id);
-    Pet save(Pet pet);
-    void deleteById(Long id);
-    List<Pet> findByClientId(Long clientId);
+    List<Pet> getAllPets();
+    List<Pet> getPetsByClinicId(int clinicId);
+    List<Pet> getPetsByNameContaining(String query);
+    Pet getPetById(int id);
+    Pet createPet(Pet pet);
+    Pet updatePet(Pet pet);
+    void deletePet(int id);
 }
- */
