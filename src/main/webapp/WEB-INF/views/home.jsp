@@ -28,6 +28,8 @@
         <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
             <div class="alert alert-success">
                 <h4 class="alert-heading">Veterinary Panel</h4>
+                <a href="https://google.com" class="btn btn-primary me-2">Google Linki</a>
+                <a href="/veterinary/appointments" class="btn btn-primary me-2">Appointment Page</a>
                 <p>Manage medical records, view appointments.</p>
             </div>
         </c:when>
