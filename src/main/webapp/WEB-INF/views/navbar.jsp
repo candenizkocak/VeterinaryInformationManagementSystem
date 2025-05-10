@@ -17,6 +17,15 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/users">Users</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/clinics">Clinics</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/veterinaries">Veterinaries</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/pets">Pets</a>
+                        </li>
                     </c:when>
                     <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
                         <li class="nav-item">
