@@ -3,6 +3,7 @@ package com.vetapp.veterinarysystem.controller;
 import com.vetapp.veterinarysystem.model.User;
 import com.vetapp.veterinarysystem.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 public class SignupController {
 
     private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public SignupController(UserService userService) {
+    public SignupController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/signup")
@@ -29,7 +32,7 @@ public class SignupController {
         try {
             User user = new User();
             user.setUsername(username);
-            user.setPasswordHash(password);
+            user.setPasswordHash(passwordEncoder.encode(password));
             user.setEmail(email);
             user.setPhone(phone);
             user.setRoleId(1);

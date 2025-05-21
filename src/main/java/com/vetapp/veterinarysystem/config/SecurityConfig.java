@@ -34,7 +34,9 @@ public class SecurityConfig {
                         .loginProcessingUrl("/perform_login")
                         .successHandler((request, response, authentication) -> {
                             String role = authentication.getAuthorities().iterator().next().getAuthority();
+                            String username = authentication.getName();
                             request.getSession().setAttribute("role", role);
+                            request.getSession().setAttribute("username", username);
                             response.sendRedirect("/");
                         })
                         .failureUrl("/login?error")

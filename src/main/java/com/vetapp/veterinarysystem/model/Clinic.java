@@ -3,6 +3,8 @@ package com.vetapp.veterinarysystem.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "Clinics")
 @Data
@@ -25,4 +27,11 @@ public class Clinic {
 
     @Column(name = "Location", length = 255)
     private String location;
+
+    @Column(name = "OpeningHour")
+    private LocalTime openingHour;
+
+    @Column(name = "ClosingHour")
+    private LocalTime closingHour;
+
 }

@@ -1,16 +1,21 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<body id="pageBody">
 
 <jsp:include page="../navbar.jsp"/>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Users</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<!-- STYLES -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
+
+<!-- SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <div class="container mt-5">
     <h2 class="mb-4">Users Page</h2>
 
@@ -44,11 +49,7 @@
         </div>
     </form>
 
-    <div class="mb-3">
-        <input type="text" id="userSearch" class="form-control" placeholder="Search by username...">
-    </div>
-
-    <table class="table table-bordered table-striped" id="userTable">
+    <table id="userTable" class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
             <th>ID</th>
@@ -59,7 +60,7 @@
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody id="userTableBody">
+        <tbody>
         <c:forEach var="user" items="${users}">
             <tr>
                 <td>${user.userID}</td>
@@ -68,72 +69,56 @@
                 <td>${user.phone}</td>
                 <td>${user.role.roleName}</td>
                 <td>
-                    <a href="/admin/users/edit/${user.userID}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="/admin/users/edit/${user.userID}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="/admin/users/delete/${user.userID}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
                 </td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
-
-    <div id="noResults" class="alert alert-warning d-none">No matching users found.</div>
-
-    <div class="mt-3">
-        <button id="prevPage" class="btn btn-secondary btn-sm">Previous</button>
-        <button id="nextPage" class="btn btn-secondary btn-sm">Next</button>
-    </div>
 </div>
 
 <script>
-    const searchInput = document.getElementById("userSearch");
-    const tableBody = document.getElementById("userTableBody");
-    const rows = Array.from(tableBody.querySelectorAll("tr"));
-    const rowsPerPage = 100;
-    const noResults = document.getElementById("noResults");
-    let currentPage = 1;
-
-    function renderTable(filtered) {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const paginated = filtered.slice(start, end);
-
-        tableBody.innerHTML = "";
-        paginated.forEach(row => tableBody.appendChild(row));
-        noResults.classList.toggle("d-none", filtered.length > 0);
-    }
-
-    function updateTable() {
-        const query = searchInput.value.toLowerCase();
-        const filtered = rows.filter(row =>
-            row.cells[1].textContent.toLowerCase().includes(query)
-        );
-        currentPage = 1;
-        renderTable(filtered);
-    }
-
-    document.getElementById("prevPage").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updateTable();
-        }
+    $(document).ready(function () {
+        $('#userTable').DataTable({
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50, 100],
+            columnDefs: [
+                { orderable: false, targets: -1 }
+            ]
+        });
     });
-
-    document.getElementById("nextPage").addEventListener("click", () => {
-        const query = searchInput.value.toLowerCase();
-        const filtered = rows.filter(row =>
-            row.cells[1].textContent.toLowerCase().includes(query)
-        );
-        const maxPage = Math.ceil(filtered.length / rowsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            renderTable(filtered);
-        }
-    });
-
-    searchInput.addEventListener("keyup", updateTable);
-    renderTable(rows);
 </script>
+
+<script>
+    const body = document.getElementById("pageBody");
+
+    function applyTheme(theme) {
+        if (theme === "dark") {
+            body.classList.add("bg-dark", "text-white");
+            body.classList.remove("bg-light", "text-dark");
+        } else {
+            body.classList.add("bg-light", "text-dark");
+            body.classList.remove("bg-dark", "text-white");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const currentTheme = localStorage.getItem("theme") || "light";
+        applyTheme(currentTheme);
+
+        const toggleBtn = document.getElementById("themeToggle");
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", () => {
+                const newTheme = localStorage.getItem("theme") === "dark" ? "light" : "dark";
+                localStorage.setItem("theme", newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    });
+</script>
+
 </body>
-</html>

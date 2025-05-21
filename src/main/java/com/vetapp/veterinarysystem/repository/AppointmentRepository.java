@@ -4,6 +4,7 @@ import com.vetapp.veterinarysystem.model.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
@@ -16,4 +17,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             "JOIN FETCH a.veterinary v " +
             "JOIN FETCH a.clinic c")
     List<Appointment> findAllWithDetails();
+    List<Appointment> findByVeterinaryVeterinaryIdAndAppointmentDateBetween(
+            Long veterinaryId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
 }

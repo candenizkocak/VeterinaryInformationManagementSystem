@@ -1,6 +1,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<body id="pageBody">
+
 <jsp:include page="../navbar.jsp"/>
+
+<!-- STYLES -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
+
+<!-- SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 <div class="container mt-5">
     <h2 class="mb-4">Clinic Management</h2>
@@ -13,6 +27,14 @@
         <div class="col-md-4">
             <label class="form-label">Location</label>
             <input type="text" name="location" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Opening Hour</label>
+            <input type="time" name="openingHour" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Closing Hour</label>
+            <input type="time" name="closingHour" class="form-control" required>
         </div>
         <div class="col-md-4">
             <label class="form-label">User (Clinic Owner)</label>
@@ -27,26 +49,26 @@
         </div>
     </form>
 
-    <div class="mb-3">
-        <input type="text" id="clinicSearch" class="form-control" placeholder="Search by clinic name...">
-    </div>
-
-    <table class="table table-bordered table-striped" id="clinicTable">
+    <table id="clinicTable" class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
             <th>ID</th>
             <th>Clinic Name</th>
             <th>Location</th>
+            <th>Opening Hour</th>
+            <th>Closing Hour</th>
             <th>Owner</th>
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody id="clinicTableBody">
+        <tbody>
         <c:forEach var="clinic" items="${clinics}">
             <tr>
                 <td>${clinic.clinicId}</td>
                 <td>${clinic.clinicName}</td>
                 <td>${clinic.location}</td>
+                <td>${clinic.openingHour}</td>
+                <td>${clinic.closingHour}</td>
                 <td>${clinic.user.username}</td>
                 <td>
                     <a href="/admin/clinics/edit/${clinic.clinicId}" class="btn btn-warning btn-sm">Edit</a>
@@ -60,61 +82,46 @@
         </c:forEach>
         </tbody>
     </table>
-
-    <div id="noResults" class="alert alert-warning d-none">No matching clinics found.</div>
-
-    <div class="mt-3">
-        <button id="prevPage" class="btn btn-secondary btn-sm">Previous</button>
-        <button id="nextPage" class="btn btn-secondary btn-sm">Next</button>
-    </div>
 </div>
 
 <script>
-    const searchInput = document.getElementById("clinicSearch");
-    const tableBody = document.getElementById("clinicTableBody");
-    const rows = Array.from(tableBody.querySelectorAll("tr"));
-    const rowsPerPage = 100;
-    const noResults = document.getElementById("noResults");
-    let currentPage = 1;
-
-    function renderTable(filtered) {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const paginated = filtered.slice(start, end);
-
-        tableBody.innerHTML = "";
-        paginated.forEach(row => tableBody.appendChild(row));
-        noResults.classList.toggle("d-none", filtered.length > 0);
-    }
-
-    function updateTable() {
-        const query = searchInput.value.toLowerCase();
-        const filtered = rows.filter(row =>
-            row.cells[1].textContent.toLowerCase().includes(query)
-        );
-        currentPage = 1;
-        renderTable(filtered);
-    }
-
-    document.getElementById("prevPage").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updateTable();
-        }
+    $(document).ready(function () {
+        $('#clinicTable').DataTable({
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50, 100],
+            columnDefs: [
+                { orderable: false, targets: -1 }
+            ]
+        });
     });
-
-    document.getElementById("nextPage").addEventListener("click", () => {
-        const query = searchInput.value.toLowerCase();
-        const filtered = rows.filter(row =>
-            row.cells[1].textContent.toLowerCase().includes(query)
-        );
-        const maxPage = Math.ceil(filtered.length / rowsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            renderTable(filtered);
-        }
-    });
-
-    searchInput.addEventListener("keyup", updateTable);
-    renderTable(rows);
 </script>
+
+<script>
+    const body = document.getElementById("pageBody");
+
+    function applyTheme(theme) {
+        if (theme === "dark") {
+            body.classList.add("bg-dark", "text-white");
+            body.classList.remove("bg-light", "text-dark");
+        } else {
+            body.classList.add("bg-light", "text-dark");
+            body.classList.remove("bg-dark", "text-white");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const currentTheme = localStorage.getItem("theme") || "light";
+        applyTheme(currentTheme);
+
+        const toggleBtn = document.getElementById("themeToggle");
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", () => {
+                const newTheme = localStorage.getItem("theme") === "dark" ? "light" : "dark";
+                localStorage.setItem("theme", newTheme);
+                applyTheme(newTheme);
+            });
+        }
+    });
+</script>
+
+</body>

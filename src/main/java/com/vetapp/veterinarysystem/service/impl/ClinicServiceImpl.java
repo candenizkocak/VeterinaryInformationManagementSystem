@@ -32,7 +32,8 @@ public class ClinicServiceImpl implements ClinicService {
         clinic.setUser(user);
         clinic.setClinicName(clinicDto.getClinicName());
         clinic.setLocation(clinicDto.getLocation());
-
+        clinic.setOpeningHour(clinicDto.getOpeningHour());
+        clinic.setClosingHour(clinicDto.getClosingHour());
         return clinicRepository.save(clinic);
     }
 
@@ -52,8 +53,9 @@ public class ClinicServiceImpl implements ClinicService {
 
         clinic.setClinicName(clinicDto.getClinicName());
         clinic.setLocation(clinicDto.getLocation());
+        clinic.setOpeningHour(clinicDto.getOpeningHour());
+        clinic.setClosingHour(clinicDto.getClosingHour());
         clinic.setUser(user);
-
         return clinicRepository.save(clinic);
     }
 

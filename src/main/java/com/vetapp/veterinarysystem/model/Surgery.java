@@ -35,4 +35,9 @@ public class Surgery {
 
     @Column(name = "Notes", columnDefinition = "TEXT")
     private String notes;
+
+    @ManyToOne
+    @JoinColumn(name = "MedicalRecordID")
+    private MedicalRecord medicalRecord;
+
 }

@@ -16,28 +16,22 @@ public class MedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RecordID")
-    private Long recordId;
+    private Long medicalRecordId;
 
     @ManyToOne
-    @JoinColumn(name = "PetID", nullable = false)
+    @JoinColumn(name = "PetID")
     private Pet pet;
 
     @ManyToOne
-    @JoinColumn(name = "VeterinaryID", nullable = false)
+    @JoinColumn(name = "VeterinaryID")
     private Veterinary veterinary;
 
-    @Column(name = "Diagnosis", columnDefinition = "TEXT")
-    private String diagnosis;
-
-    @Column(name = "Treatment", columnDefinition = "TEXT")
-    private String treatment;
-
     @Column(name = "RecordDate")
-    private LocalDate recordDate;
+    private LocalDate date;
+
+    @Column(name = "Diagnosis")
+    private String description;
+
+    @Column(name = "Treatment")
+    private String treatment;
 }
-
-/**
- Bu sınıf, her tıbbi kaydın bir evcil hayvana ve bir veterinere ait olduğunu belirtir.
-
- 🔁 Ayrıca Pet ve Veterinary sınıflarında @OneToMany(mappedBy = "...") şeklinde ilişkileri göstererek çift taraflı yapı kurabilirsin.
- */

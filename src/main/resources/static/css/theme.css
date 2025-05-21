@@ -1,0 +1,242 @@
+body.bg-dark table.dataTable {
+    background-color: #1e1e1e !important;
+    color: white;
+}
+
+body.bg-dark table.dataTable td,
+body.bg-dark table.dataTable th {
+    background-color: #1e1e1e !important;
+    color: white !important;
+    border-color: #444 !important;
+}
+
+body.bg-dark table.dataTable thead {
+    background-color: #2b2b2b !important;
+}
+
+body.bg-dark table.dataTable thead th {
+    color: white !important;
+}
+
+body.bg-dark table.dataTable.stripe tbody tr.odd {
+    background-color: #2b2b2b !important;
+}
+
+body.bg-dark table.dataTable.stripe tbody tr.even {
+    background-color: #1e1e1e !important;
+}
+
+body.bg-dark .dataTables_wrapper .dataTables_filter input,
+body.bg-dark .dataTables_wrapper .dataTables_length select {
+    background-color: #2b2b2b !important;
+    color: white !important;
+    border: 1px solid #555 !important;
+}
+
+body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button {
+    background-color: #2b2b2b !important;
+    color: white !important;
+    border: 1px solid #444 !important;
+}
+
+body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #444 !important;
+    color: white !important;
+}
+
+body.bg-dark .paginate_button.current,
+body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+    background-color: #0d6efd !important;
+    color: white !important;
+    border: none !important;
+}
+
+body.bg-dark .paginate_button .page-link {
+    background-color: #2b2b2b !important;
+    color: white !important;
+    border: 1px solid #444 !important;
+}
+
+body.bg-dark .paginate_button .page-link:hover {
+    background-color: #444 !important;
+    color: white !important;
+}
+
+body.bg-dark .paginate_button.active .page-link {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: white !important;
+}
+
+body.bg-dark .dataTables_wrapper .dataTables_info {
+    color: #ccc !important;
+}
+
+body.bg-dark label,
+body.bg-dark .form-label,
+body.bg-dark select {
+    color: #fff !important;
+}
+
+body.bg-dark input.form-control,
+body.bg-dark select.form-select,
+body.bg-dark textarea.form-control {
+    background-color: #2b2b2b !important;
+    color: white !important;
+    border: 1px solid #555 !important;
+}
+
+body.bg-dark input.form-control::placeholder,
+body.bg-dark textarea.form-control::placeholder {
+    color: #aaa !important;
+}
+
+body.bg-dark select.form-select option {
+    background-color: #2b2b2b !important;
+    color: #fff !important;
+}
+body.bg-dark .btn-outline-primary {
+    color: #0d6efd !important;
+    border-color: #0d6efd !important;
+}
+
+body.bg-dark .btn-outline-primary:hover {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    margin-left: 10px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    height: 26px;
+    width: 26px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 26px;
+    font-size: 14px;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: #444;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+body.bg-dark #breedDescription {
+    color: white;
+}
+
+body.bg-light #breedDescription {
+    color: black;
+}
+
+#petSelectArea {
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    max-width: 800px;
+    margin: auto;
+    z-index: 2;
+}
+#petSelectArea #petTypeContainer,
+#petSelectArea #petBreedContainer {
+    position: absolute;
+    top: 0;
+    width: 300px;
+    transition: all 0.6s ease-in-out;
+}
+
+#petSelectArea #petTypeContainer {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#petSelectArea #petBreedContainer {
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+#petSelectArea.pets-active #petTypeContainer {
+    transform: translateX(-150%);
+}
+
+#petSelectArea.pets-active #petBreedContainer {
+    transform: translateX(50%);
+    opacity: 1;
+    visibility: visible;
+}
+
+body.bg-light label,
+body.bg-light .form-label {
+    color: #000 !important;
+}
+
+body.bg-light section#pets {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    color: black !important;
+}
+
+#pets {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-color: rgba(30, 30, 30, 0.49) !important;
+    min-height: 60vh !important;
+}
+
+
+#pets .container {
+    background-color: transparent !important;
+    backdrop-filter: blur(4px);
+    z-index: 1;
+}
+
+
+.fade-bg {
+    opacity: 1 !important;
+    transition: opacity 0.5s ease-in-out;
+}
+
+@keyframes fadebg {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+}
