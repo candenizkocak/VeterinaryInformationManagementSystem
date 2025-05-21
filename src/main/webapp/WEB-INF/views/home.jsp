@@ -40,11 +40,19 @@
                 </c:when>
 
                 <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
-                    <div class="alert alert-info text-center">
-                        <h4>Client Panel</h4>
-                        <p>View your pets, make appointments and more.</p>
+                    <div class="card bg-info text-white mb-3">
+                        <div class="card-header">Client Panel</div>
+                        <div class="card-body text-center">
+                            <p class="mb-4">Manage your animals, view appointments, and update account settings.</p>
+
+                            <a href="/api/clients/animals" class="btn btn-light me-2">🐾 My Animals</a>
+                            <a href="/api/clients/settings" class="btn btn-light me-2">⚙️ Account Settings</a>
+                            <a href="/api/clients/appointments" class="btn btn-outline-light mt-2">📅 My Appointments</a>                         </div>
                     </div>
                 </c:when>
+
+
+
 
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                     <div class="alert alert-success text-center">
