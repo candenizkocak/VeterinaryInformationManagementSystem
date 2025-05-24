@@ -23,4 +23,9 @@ public class SurgeryServiceImpl implements SurgeryService {
     public void saveSurgery(Surgery surgery) {
         surgeryRepository.save(surgery);
     }
+
+    @Override
+    public List<Surgery> getSurgeriesByMedicalRecordId(Long medicalRecordId) {
+        return surgeryRepository.findByMedicalRecord_MedicalRecordId(medicalRecordId);
+    }
 }

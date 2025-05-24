@@ -13,4 +13,7 @@ public interface AppointmentService {
     Appointment getAppointmentById(Long id);
     List<Appointment> getAllAppointments();
     List<LocalDateTime> getAvailableTimeSlots(Long clinicId, Long veterinaryId, LocalDate date);
+
+    List<Appointment> getAppointmentsByVeterinaryId(Long veterinaryId); // Added
+
 }

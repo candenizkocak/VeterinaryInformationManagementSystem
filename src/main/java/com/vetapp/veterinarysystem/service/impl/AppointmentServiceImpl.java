@@ -34,6 +34,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.veterinaryRepository = veterinaryRepository;
     }
 
+
+    @Override
+    public List<Appointment> getAppointmentsByVeterinaryId(Long veterinaryId) {
+        return appointmentRepository.findByVeterinary_VeterinaryId(veterinaryId);
+    }
+
+
     @Override
     public Appointment createAppointment(Appointment appointment) {
         logger.info("createAppointment() called with Pet: {}, Clinic: {}, Veterinary: {}, Date: {}, Status: {}",

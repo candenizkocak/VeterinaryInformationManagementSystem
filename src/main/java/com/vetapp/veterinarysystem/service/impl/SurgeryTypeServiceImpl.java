@@ -18,4 +18,10 @@ public class SurgeryTypeServiceImpl implements SurgeryTypeService {
     public List<SurgeryType> getAllSurgeryTypes() {
         return surgeryTypeRepository.findAll();
     }
+
+    @Override // EKLENDİ
+    public SurgeryType getSurgeryTypeById(Long id) {
+        return surgeryTypeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Surgery Type not found with ID: " + id));
+    }
 }

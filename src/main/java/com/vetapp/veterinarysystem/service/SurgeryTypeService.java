@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface SurgeryTypeService {
     List<SurgeryType> getAllSurgeryTypes();
+    SurgeryType getSurgeryTypeById(Long id); // EKLENDİ
 }

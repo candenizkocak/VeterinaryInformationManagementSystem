@@ -1,8 +1,12 @@
 package com.vetapp.veterinarysystem.service;
 
 import com.vetapp.veterinarysystem.model.MedicalRecord;
+import com.vetapp.veterinarysystem.model.Pet;
+import com.vetapp.veterinarysystem.model.Veterinary;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface MedicalRecordService {
     List<MedicalRecord> getAllMedicalRecords();
@@ -12,4 +16,6 @@ public interface MedicalRecordService {
     MedicalRecord getMedicalRecordById(Long id);
     void deleteMedicalRecord(Long id);
 
+    Optional<MedicalRecord> findByPetAndVeterinaryAndDate(Pet pet, Veterinary veterinary, LocalDate date);
+    MedicalRecord saveMedicalRecordForVet(MedicalRecord record);
 }

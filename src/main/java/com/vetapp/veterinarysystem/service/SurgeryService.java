@@ -7,4 +7,5 @@ import java.util.List;
 public interface SurgeryService {
     List<Surgery> getSurgeriesByPetId(Long petId);
     void saveSurgery(Surgery surgery);
+    List<Surgery> getSurgeriesByMedicalRecordId(Long medicalRecordId);
 }
