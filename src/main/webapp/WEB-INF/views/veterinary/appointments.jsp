@@ -70,14 +70,15 @@
         <c:forEach var="appt" items="${appointments}">
             <tr>
                 <td>${appt.appointmentId}</td>
-                <td>${appt.pet.name}</td>
-                <td>${appt.clinic.clinicName}</td>
-                <td>${appt.veterinary.firstName} ${appt.veterinary.lastName}</td>
+                <td>${appt.petName}</td>  <%-- Now using DTO property --%>
+                <td>${appt.clientName}</td> <%-- Added client name --%>
+                <td>${appt.clinicName}</td> <%-- Now using DTO property --%>
+                <td>${appt.veterinaryName}</td> <%-- Now using DTO property --%>
                 <td>${appt.appointmentDate}</td>
                 <td>${appt.status}</td>
                 <td>
-                    <a href="/admin/appointments/edit/${appt.appointmentId}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="/admin/appointments/delete/${appt.appointmentId}" method="post" style="display:inline;">
+                    <a href="/veterinary/appointments/edit/${appt.appointmentId}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="/veterinary/appointments/delete/${appt.appointmentId}" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
                 </td>

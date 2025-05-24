@@ -1,5 +1,6 @@
 package com.vetapp.veterinarysystem.controller;
 
+import com.vetapp.veterinarysystem.dto.AppointmentDTO; // Add this import
 import com.vetapp.veterinarysystem.dto.VeterinaryDto;
 import com.vetapp.veterinarysystem.model.Appointment;
 import com.vetapp.veterinarysystem.model.Veterinary;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter; // Add this import
 import java.util.List;
+import java.util.stream.Collectors; // Add this import
 
 @Controller
 @RequestMapping("/veterinary/appointments")
@@ -28,7 +31,7 @@ public class AppointmentController {
 
     @GetMapping
     public String showAppointments(Model model) {
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
+        model.addAttribute("appointments", convertToDtoList(appointmentService.getAllAppointments())); // Use DTO list
         model.addAttribute("pets", petService.getAllPets());
         model.addAttribute("clinics", clinicService.getAllClinics());
         model.addAttribute("veterinaries", veterinaryService.getAllVeterinaries());
@@ -45,7 +48,7 @@ public class AppointmentController {
     @GetMapping("/edit/{id}")
     public String editAppointmentForm(@PathVariable Long id, Model model) {
         model.addAttribute("appointment", appointmentService.getAppointmentById(id));
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
+        model.addAttribute("appointments", convertToDtoList(appointmentService.getAllAppointments())); // Use DTO list
         model.addAttribute("pets", petService.getAllPets());
         model.addAttribute("clinics", clinicService.getAllClinics());
         model.addAttribute("veterinaries", veterinaryService.getAllVeterinaries());
@@ -63,6 +66,7 @@ public class AppointmentController {
         appointmentService.deleteAppointment(id);
         return "redirect:/veterinary/appointments";
     }
+
     @GetMapping(value = "/veterinaries-by-clinic/{clinicId}", produces = "application/json")
     @ResponseBody
     public List<VeterinaryDto> getVeterinariesByClinic(@PathVariable Long clinicId) {
@@ -74,5 +78,21 @@ public class AppointmentController {
                 v.getSpecialization(),
                 v.getUser() != null ? v.getUser().getUsername() : "N/A"
         )).toList();
+    }
+
+    // Helper method to convert Appointment entity to AppointmentDTO
+    private List<AppointmentDTO> convertToDtoList(List<Appointment> appointmentList) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        return appointmentList.stream().map(a -> {
+            AppointmentDTO dto = new AppointmentDTO();
+            dto.setAppointmentId(a.getAppointmentId());
+            dto.setAppointmentDate(a.getAppointmentDate().format(formatter));
+            dto.setStatus(a.getStatus());
+            dto.setPetName(a.getPet().getName());
+            dto.setClientName(a.getPet().getClient().getFirstName() + " " + a.getPet().getClient().getLastName()); // Added client name
+            dto.setClinicName(a.getClinic().getClinicName());
+            dto.setVeterinaryName(a.getVeterinary().getFirstName() + " " + a.getVeterinary().getLastName());
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

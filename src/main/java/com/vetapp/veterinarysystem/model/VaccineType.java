@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "VaccineTypes")
+@Table(name = "VaccineType") // <--- CHANGE THIS LINE
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
