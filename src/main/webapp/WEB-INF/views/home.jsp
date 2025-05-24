@@ -51,9 +51,6 @@
                     </div>
                 </c:when>
 
-
-
-
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                     <div class="alert alert-success text-center">
                         <h4>Veterinary Panel</h4>
@@ -63,10 +60,7 @@
                 </c:when>
 
                 <c:when test="${sessionScope.role == 'ROLE_CLINIC'}">
-                    <div class="alert alert-warning text-center">
-                        <h4>Clinic Panel</h4>
-                        <p>Manage veterinarians, inventory and appointments.</p>
-                    </div>
+                    <jsp:include page="clinic/dashboard.jsp"/>
                 </c:when>
             </c:choose>
         </c:when>

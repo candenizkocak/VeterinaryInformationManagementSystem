@@ -27,7 +27,8 @@ public class ClinicController {
 
     private final ClinicService clinicService;
     private final VeterinaryService veterinaryService;
-    private final ClinicVeterinaryRepository clinicVeterinaryRepository;
+    private final ClinicVeterinaryRepository clinicVeterinaryRepository; // Keep for reads if necessary, or remove if all ops moved to service
+    private final ClinicVeterinaryService clinicVeterinaryService; // Added new service
     private final AppointmentService appointmentService;
     private final PetService petService;
     private final ClientService clientService; // To retrieve client details for pets
@@ -85,21 +86,8 @@ public class ClinicController {
         try {
             Clinic clinic = getCurrentClinic(principal);
             Veterinary vet = veterinaryService.getVeterinaryEntityById(veterinaryId);
-
-            // Check if already assigned
-            boolean alreadyAssigned = clinicVeterinaryRepository.findByClinic(clinic).stream()
-                    .anyMatch(cv -> cv.getVeterinary().getVeterinaryId().equals(veterinaryId));
-
-            if (alreadyAssigned) {
-                redirectAttributes.addFlashAttribute("error", "Veterinary is already assigned to this clinic.");
-            } else {
-                ClinicVeterinary relation = ClinicVeterinary.builder()
-                        .clinic(clinic)
-                        .veterinary(vet)
-                        .build();
-                clinicVeterinaryRepository.save(relation);
-                redirectAttributes.addFlashAttribute("success", "Veterinary assigned successfully!");
-            }
+            clinicVeterinaryService.assignVeterinaryToClinic(clinic, vet); // Use new service
+            redirectAttributes.addFlashAttribute("success", "Veterinary assigned successfully!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -111,7 +99,7 @@ public class ClinicController {
         try {
             Clinic clinic = getCurrentClinic(principal);
             Veterinary vet = veterinaryService.getVeterinaryEntityById(veterinaryId);
-            clinicVeterinaryRepository.deleteByClinicAndVeterinary(clinic, vet);
+            clinicVeterinaryService.removeVeterinaryFromClinic(clinic, vet); // Use new service
             redirectAttributes.addFlashAttribute("success", "Veterinary removed successfully!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

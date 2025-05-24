@@ -1,13 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <body id="pageBody">
-<jsp:include page="../navbar.jsp"/>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
 
 <div class="container mt-5">
-    <h2 class="mb-4">Welcome to Clinic Dashboard, ${clinic.clinicName}!</h2>
+    <h2 class="mb-4">Welcome to Clinic Dashboard, ${sessionScope.username}!</h2>
 
     <div class="alert alert-info">
         <p>This is your clinic's main management area. From here you can:</p>

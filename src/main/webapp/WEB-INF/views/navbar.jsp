@@ -138,7 +138,6 @@
                         <li class="nav-item"><a class="nav-link" href="/veterinary/something">Vet Panel</a></li>
                     </c:when>
                     <c:when test="${sessionScope.role == 'ROLE_CLINIC'}">
-                        <li class="nav-item"><a class="nav-link" href="/clinic/dashboard">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="/clinic/veterinaries">Veterinaries</a></li>
                         <li class="nav-item"><a class="nav-link" href="/clinic/appointments">Appointments</a></li>
                         <li class="nav-item"><a class="nav-link" href="/clinic/clients-and-pets">Clients & Pets</a></li>
