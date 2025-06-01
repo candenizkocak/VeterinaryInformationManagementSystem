@@ -7,6 +7,7 @@ import com.vetapp.veterinarysystem.repository.ClinicVeterinaryRepository;
 import com.vetapp.veterinarysystem.repository.VeterinaryRepository;
 import com.vetapp.veterinarysystem.service.*; // Import all services
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalTime; // Eğer sadece saat döndürüyorsanız
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/veterinary/appointments")
@@ -64,11 +68,19 @@ public class AppointmentController {
     }
 
     @PostMapping("/add")
-    public String addAppointment(@ModelAttribute Appointment appointment, Principal principal, RedirectAttributes redirectAttributes) {
+    public String addAppointment(@ModelAttribute Appointment appointment, /* Zaten LocalDateTime appointmentDate içermeli */
+                                 Principal principal, RedirectAttributes redirectAttributes) {
         try {
             Veterinary loggedInVeterinary = getLoggedInVeterinary(principal);
-            appointment.setVeterinary(loggedInVeterinary);
-            // Additional validation for clinic association if needed
+            appointment.setVeterinary(loggedInVeterinary); // Veterineri set et
+
+            // appointment.getAppointmentDate() burada dolu olmalı
+            if (appointment.getAppointmentDate() == null) {
+                // Hata yönetimi veya varsayılan bir değer atama
+                redirectAttributes.addFlashAttribute("errorMessage", "Appointment date and time are required.");
+                return "redirect:/veterinary/appointments";
+            }
+
             appointmentService.createAppointment(appointment);
             redirectAttributes.addFlashAttribute("successMessage", "Appointment added successfully!");
         } catch (Exception e) {
@@ -256,5 +268,36 @@ public class AppointmentController {
                     a.getVeterinary().getFirstName() + " " + a.getVeterinary().getLastName() : "N/A");
             return dto;
         }).collect(Collectors.toList());
+    }
+
+
+
+
+    @GetMapping("/available-slots")
+    @ResponseBody // Bu metodun doğrudan HTTP yanıt gövdesine yazmasını sağlar (JSON)
+    public List<String> getAvailableSlotsForVeterinary(@RequestParam Long clinicId,
+                                                       // @RequestParam Long veterinaryId, // Veteriner zaten giriş yapmış kullanıcı olacak
+                                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                       Principal principal) {
+        try {
+            Veterinary loggedInVeterinary = getLoggedInVeterinary(principal); // Bu metot AppointmentController'da zaten var
+            if (loggedInVeterinary == null) {
+                // Normalde bu durum principal null ise zaten handle edilir ama ekstra kontrol
+                return Collections.emptyList();
+            }
+            Long veterinaryId = loggedInVeterinary.getVeterinaryId();
+
+            List<LocalDateTime> availableSlots = appointmentService.getAvailableTimeSlots(clinicId, veterinaryId, date);
+
+            // LocalDateTime listesini "HH:mm" formatında String listesine çevir
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            return availableSlots.stream()
+                    .map(dateTime -> dateTime.format(timeFormatter))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // Hata loglama eklenebilir
+            System.err.println("Error fetching available slots: " + e.getMessage());
+            return Collections.emptyList(); // Hata durumunda boş liste döndür
+        }
     }
 }

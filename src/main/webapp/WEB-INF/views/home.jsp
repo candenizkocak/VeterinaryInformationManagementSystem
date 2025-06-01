@@ -53,9 +53,8 @@
 
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                     <div class="alert alert-success text-center">
-                        <h4>Veterinary Panel</h4>
-                        <p>Manage medical records, view appointments.</p>
-                        <a href="/veterinary/appointments" class="btn btn-outline-light mt-2">Appointments</a>
+                        <h4>Welcome to Veterinary Panel</h4>
+                        <a href="/veterinary/appointments" class="btn btn-light mt-2">My Appointments</a>
                     </div>
                 </c:when>
 

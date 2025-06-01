@@ -11,4 +11,7 @@ public interface VaccinationService {
     // Add other methods as needed
 
     List<Vaccination> getVaccinationsByPetAndDate(Pet pet, LocalDate date);
+
+    void deleteVaccination(Long vaccinationId); // YENİ METOT
+    Vaccination getVaccinationById(Long vaccinationId); // YENİ METOT (Opsiyonel ama silme öncesi kontrol için iyi olabilir)
 }

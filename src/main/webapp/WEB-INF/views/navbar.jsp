@@ -135,7 +135,7 @@
                         <li class="nav-item"><a class="nav-link" href="/client/something">Client Panel</a></li>
                     </c:when>
                     <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
-                        <li class="nav-item"><a class="nav-link" href="/veterinary/appointments">Appointments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/veterinary/appointments">My Appointments</a></li>
                     </c:when>
                     <c:when test="${sessionScope.role == 'ROLE_CLINIC'}">
                         <li class="nav-item"><a class="nav-link" href="/clinic/veterinaries">Veterinaries</a></li>

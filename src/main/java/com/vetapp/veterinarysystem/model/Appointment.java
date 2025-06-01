@@ -2,6 +2,7 @@ package com.vetapp.veterinarysystem.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +32,7 @@ public class Appointment {
     private Veterinary veterinary;
 
     @Column(name = "AppointmentDate")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // Bu yardımcı olabilir
     private LocalDateTime appointmentDate;
 
     @Column(name = "Status")

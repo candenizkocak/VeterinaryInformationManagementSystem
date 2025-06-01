@@ -30,4 +30,14 @@ public class VaccinationServiceImpl implements VaccinationService {
     public List<Vaccination> getVaccinationsByPetAndDate(Pet pet, LocalDate date) {
         return vaccinationRepository.findByPetAndDateAdministered(pet, date);
     }
+
+    @Override
+    public void deleteVaccination(Long vaccinationId) { // YENİ METOT IMPLEMENTASYONU
+        vaccinationRepository.deleteById(vaccinationId);
+    }
+
+    @Override
+    public Vaccination getVaccinationById(Long vaccinationId) { // YENİ METOT IMPLEMENTASYONU
+        return vaccinationRepository.findById(vaccinationId).orElse(null);
+    }
 }

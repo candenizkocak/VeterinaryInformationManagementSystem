@@ -28,4 +28,14 @@ public class SurgeryServiceImpl implements SurgeryService {
     public List<Surgery> getSurgeriesByMedicalRecordId(Long medicalRecordId) {
         return surgeryRepository.findByMedicalRecord_MedicalRecordId(medicalRecordId);
     }
+
+    @Override
+    public void deleteSurgery(Long surgeryId) { // YENİ METOT IMPLEMENTASYONU
+        surgeryRepository.deleteById(surgeryId);
+    }
+
+    @Override
+    public Surgery getSurgeryById(Long surgeryId) { // YENİ METOT IMPLEMENTASYONU
+        return surgeryRepository.findById(surgeryId).orElse(null);
+    }
 }
