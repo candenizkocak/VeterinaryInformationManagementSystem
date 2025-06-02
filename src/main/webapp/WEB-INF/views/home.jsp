@@ -40,13 +40,14 @@
                 </c:when>
 
                 <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
+                    <jsp.include page="client/navbar.jsp"/>
                     <div class="card bg-info text-white mb-4">
                         <div class="card-header">Client Panel</div>
                         <div class="card-body text-center">
                             <p class="mb-4">Manage your animals, view appointments, and update account settings.</p>
 
                             <a href="/api/clients/animals" class="btn btn-light me-2">🐾 My Animals</a>
-                            <a href="/api/clients/settings" class="btn btn-light me-2">⚙️ Account Settings</a>
+                            <a href="/api/clients/account-settings" class="btn btn-light me-2">⚙️ Account Settings</a>
                             <a href="/api/clients/appointments" class="btn btn-light me-2">📅 My Appointments</a>
                             <a href="/api/clients/add-animal" class="btn btn-light me-2">🐶 Add Animal</a>
                         </div>

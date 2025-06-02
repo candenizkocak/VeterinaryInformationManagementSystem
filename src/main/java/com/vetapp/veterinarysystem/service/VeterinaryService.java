@@ -4,6 +4,7 @@ import com.vetapp.veterinarysystem.dto.VeterinaryDto;
 import com.vetapp.veterinarysystem.model.Veterinary;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Arrays;
 import java.util.List;
 
 public interface VeterinaryService {

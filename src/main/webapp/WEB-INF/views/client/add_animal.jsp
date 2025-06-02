@@ -2,29 +2,87 @@
 <html>
 <head>
     <title>Add Animal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background: #f7faff;
+        }
+        .add-animal-card {
+            max-width: 480px;
+            margin: 48px auto 0 auto;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 #1c4c8c1c;
+            background: #fff;
+            padding: 38px 38px 24px 38px;
+        }
+        .add-animal-title {
+            font-size: 2.1rem;
+            color: #1066ee;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: 1px;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #27496d;
+        }
+        .form-control, .form-select {
+            border-radius: 12px;
+            font-size: 1.09rem;
+            padding: 11px 12px;
+        }
+        .btn-animal {
+            background: #157afe;
+            border: none;
+            font-size: 1.1rem;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn-animal:hover {
+            background: #1066ee;
+        }
+        .alert {
+            border-radius: 10px;
+            font-size: 1.09rem;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px 0 #00996612;
+            animation: slideIn 0.45s;
+        }
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(-30px);}
+            100% { opacity: 1; transform: translateY(0);}
+        }
+        @media (max-width: 700px) {
+            .add-animal-card { padding: 18px 8px 18px 8px; }
+            .add-animal-title { font-size: 1.3rem; }
+        }
+    </style>
 </head>
-<body class="bg-light">
-
+<body>
 <jsp:include page="navbar.jsp"/>
+<div class="add-animal-card">
+    <div class="add-animal-title">
+        <i class="bi bi-emoji-smile"></i> Add a New Animal
+    </div>
 
-<div class="container py-5">
-    <h2 class="mb-4 text-primary">Add a New Animal</h2>
-
-    <!-- Kayıt başarılıysa Bootstrap alert popup göster -->
     <c:if test="${success}">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ✔ Animal Savings Successful!
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <span style="font-size:1.2em;">&#10003;</span> Animal saved successfully!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/api/clients/add-animal" method="post">
+    <form action="${pageContext.request.contextPath}/api/clients/add-animal" method="post" autocomplete="off">
 
         <div class="mb-3">
             <label class="form-label">Name:</label>
-            <input type="text" name="name" class="form-control" required/>
+            <input type="text" name="name" class="form-control" required autofocus/>
         </div>
 
         <div class="mb-3">
@@ -62,8 +120,10 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Add Animal</button>
+        <button type="submit" class="btn btn-animal w-100">Add Animal</button>
     </form>
-    </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

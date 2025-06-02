@@ -1,19 +1,20 @@
 package com.vetapp.veterinarysystem.controller;
 
-import com.vetapp.veterinarysystem.dto.PetInfoDto;
+import com.vetapp.veterinarysystem.dto.*;
 import com.vetapp.veterinarysystem.model.*;
 import com.vetapp.veterinarysystem.repository.ClientRepository;
 import com.vetapp.veterinarysystem.repository.UserRepository;
-import com.vetapp.veterinarysystem.dto.ClientDetailDto;
-import com.vetapp.veterinarysystem.dto.ClientDto;
 import com.vetapp.veterinarysystem.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -25,13 +26,19 @@ public class ClientController {
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
 
-    // Yeni eklenenler:
+
     private final PetService petService;
     private final SpeciesService speciesService;
     private final BreedService breedService;
     private final GenderService genderService;
 
-    // --- DTO'lu KISIMLAR AYNEN KALIYOR ---
+    private final AppointmentService appointmentService;
+    private final ClinicService clinicService;
+    private final VeterinaryService veterinaryService;
+
+
+
+
     @PostMapping
     public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto clientDto) {
         return ResponseEntity.ok(clientService.createClient(clientDto));
@@ -147,6 +154,58 @@ public class ClientController {
         System.out.println("Silme işlemi ID: " + id);
         petService.deletePetById(id);
         return "redirect:/api/clients/my-animals";
+    }
+
+    @GetMapping("/account-settings")
+    public String showAccountSettings(Model model, Principal principal) {
+        System.out.println("Account settings çağrıldı, principal: " + principal);
+        if (principal == null) return "redirect:/login";
+        try {
+            String username = principal.getName();
+            ClientAccountSettingsDto dto = clientService.getAccountSettings(username);
+            model.addAttribute("accountSettings", dto);
+            return "client/account_settings";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Hesap bilgileri yüklenemedi: " + e.getMessage());
+            return "error/custom_error";
+        }
+    }
+
+
+
+    @PostMapping("/account-settings")
+    public String updateAccountSettings(
+            @ModelAttribute("accountSettings") ClientAccountSettingsDto dto,
+            Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+        String username = principal.getName();
+        clientService.updateAccountSettings(username, dto);
+        model.addAttribute("accountSettings", dto);
+        model.addAttribute("success", true);
+        return "client/account_settings";
+    }
+
+
+    @GetMapping("/change-password")
+    public String showChangePassword(Model model) {
+        model.addAttribute("passwordChange", new PasswordChangeDto());
+        return "client/change_password";
+    }
+
+
+    @PostMapping("/change-password")
+    public String processChangePassword(@ModelAttribute("passwordChange") PasswordChangeDto dto,
+                                        Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+        String username = principal.getName();
+        boolean result = clientService.changePassword(username, dto);
+        if (result) {
+            model.addAttribute("success", true);
+        } else {
+            model.addAttribute("error", "Password could not be changed. Please check your current password and try again.");
+        }
+        return "client/change_password";
     }
 
 

@@ -1,8 +1,6 @@
 package com.vetapp.veterinarysystem.service;
 
-import com.vetapp.veterinarysystem.dto.ClientDetailDto;
-import com.vetapp.veterinarysystem.dto.ClientDto;
-import com.vetapp.veterinarysystem.dto.PetInfoDto;
+import com.vetapp.veterinarysystem.dto.*;
 import com.vetapp.veterinarysystem.model.Client;
 
 import java.util.List;
@@ -18,4 +16,10 @@ public interface ClientService {
 
 
     Client getClientByUsername(String username);
+
+    ClientAccountSettingsDto getAccountSettings(String username);
+    void updateAccountSettings(String username, ClientAccountSettingsDto dto);
+
+    boolean changePassword(String username, PasswordChangeDto dto);
+
 }

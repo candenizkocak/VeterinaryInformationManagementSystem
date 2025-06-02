@@ -32,7 +32,11 @@ public class User {
     @Column(name = "RoleID")
     private int roleId;
 
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "RoleID", insertable = false, updatable = false)
     private Role role;
+
+
 }

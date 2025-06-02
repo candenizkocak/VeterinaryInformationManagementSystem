@@ -133,7 +133,7 @@
                     </c:when>
                     <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
                         <li class="nav-item"><a class="nav-link" href="/api/clients/animals">My Animals</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/api/clients/settings">Account Settings</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/api/clients/account-settings">Account Settings</a></li>
                         <li class="nav-item"><a class="nav-link" href="/api/clients/appointments">My Appointments</a></li>
                         <li class="nav-item"><a class="nav-link" href="/api/clients/add-animal">Add Animal</a></li>
                     </c:when>
