@@ -17,4 +17,10 @@ public class SpeciesServiceImpl implements SpeciesService {
     public List<Species> getAllSpecies() {
         return speciesRepository.findAll();
     }
+
+    @Override
+    public Species getById(int id) {
+        return speciesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Species not found with id: " + id));
+    }
 }

@@ -1,5 +1,6 @@
 package com.vetapp.veterinarysystem.service;
 
+import com.vetapp.veterinarysystem.model.Client;
 import com.vetapp.veterinarysystem.model.Pet;
 
 import java.util.List;
@@ -12,4 +13,11 @@ public interface PetService {
     Pet createPet(Pet pet);
     Pet updatePet(Pet pet);
     void deletePet(int id);
+
+    void save(Pet pet);
+
+    List<Pet> getPetsByClient(Client client);
+
+
+    void deletePetById(int id);
 }

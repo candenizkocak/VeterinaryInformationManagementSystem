@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class PetInfoDto {
+    private int id;
     private String name;
     private String species;
     private String breed;

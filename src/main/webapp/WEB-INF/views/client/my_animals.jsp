@@ -7,8 +7,9 @@
 </head>
 <body class="bg-light">
 
-<div class="container py-5">
+<jsp:include page="navbar.jsp"/>
 
+<div class="container py-5">
 
     <div class="mb-3">
         <a href="/" class="btn btn-secondary">&larr; Back to Home</a>
@@ -53,6 +54,16 @@
                                             data-bs-target="#treatmentsModal${pet.name}">
                                         View Treatments
                                     </button>
+                                    <!-- Diagnoses Button -->
+                                    <button class="btn btn-outline-warning btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#diagnosesModal${pet.name}">
+                                        View Diagnoses
+                                    </button>
+                                    <!-- Delete Button -->
+                                    <form action="${pageContext.request.contextPath}/api/clients/delete-animal/${pet.id}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete the pet?');">
+                                        <button type="submit" class="btn btn-danger btn-sm ms-1">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
 
@@ -82,7 +93,7 @@
                                 </div>
                             </div>
 
-
+                            <!-- Treatments Modal -->
                             <div class="modal fade" id="treatmentsModal${pet.name}" tabindex="-1" aria-labelledby="treatmentsModalLabel${pet.name}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -95,11 +106,12 @@
                                                 <c:when test="${not empty pet.medicalRecords}">
                                                     <ul>
                                                         <c:forEach var="record" items="${pet.medicalRecords}">
-                                                            <li>
-                                                                <strong>Date:</strong> ${record.date} <br/>
-                                                                <strong>Diagnosis:</strong> ${record.diagnosis} <br/>
-                                                                <strong>Treatment:</strong> ${record.treatment}
-                                                            </li>
+                                                            <c:if test="${not empty record.treatment}">
+                                                                <li>
+                                                                    <strong>Date:</strong> ${record.date} <br/>
+                                                                    <strong>Treatment:</strong> ${record.treatment}
+                                                                </li>
+                                                            </c:if>
                                                         </c:forEach>
                                                     </ul>
                                                 </c:when>
@@ -111,6 +123,38 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Diagnoses Modal -->
+                            <div class="modal fade" id="diagnosesModal${pet.name}" tabindex="-1" aria-labelledby="diagnosesModalLabel${pet.name}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="diagnosesModalLabel${pet.name}">Diagnoses of ${pet.name}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <c:choose>
+                                                <c:when test="${not empty pet.medicalRecords}">
+                                                    <ul>
+                                                        <c:forEach var="record" items="${pet.medicalRecords}">
+                                                            <c:if test="${not empty record.description}">
+                                                                <li>
+                                                                    <strong>Date:</strong> ${record.date} <br/>
+                                                                    <strong>Diagnosis:</strong> ${record.description}
+                                                                </li>
+                                                            </c:if>
+                                                        </c:forEach>
+                                                    </ul>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="alert alert-secondary">No diagnosis records found.</div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </c:forEach>
                         </tbody>
                     </table>
@@ -125,7 +169,7 @@
     </div>
 </div>
 
-
+<!-- Bootstrap JS (for modals) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

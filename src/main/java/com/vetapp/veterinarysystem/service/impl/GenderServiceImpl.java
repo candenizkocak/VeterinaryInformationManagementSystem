@@ -17,4 +17,11 @@ public class GenderServiceImpl implements GenderService {
     public List<Gender> getAllGenders() {
         return genderRepository.findAll();
     }
+
+    @Override
+    public Gender getById(int id) {
+        return genderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gender not found with id: " + id));
+    }
+    
 }

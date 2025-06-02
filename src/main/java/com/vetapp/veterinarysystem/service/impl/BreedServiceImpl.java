@@ -17,4 +17,10 @@ public class BreedServiceImpl implements BreedService {
     public List<Breed> getAllBreeds() {
         return breedRepository.findAll();
     }
+
+    @Override
+    public Breed getById(int id) {
+        return breedRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Breed not found with id: " + id));
+    }
 }

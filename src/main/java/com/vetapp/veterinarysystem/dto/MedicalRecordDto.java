@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class MedicalRecordDto {
     private String date;
-    private String diagnosis;
+    private String description;
     private String treatment;
 }

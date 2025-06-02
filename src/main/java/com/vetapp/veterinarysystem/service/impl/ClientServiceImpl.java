@@ -148,8 +148,27 @@ public class ClientServiceImpl implements ClientService {
                     .collect(Collectors.toList());
             dto.setVaccineNames(vaccineNames);
 
+            List<MedicalRecordDto> medicalRecords = pet.getMedicalRecords().stream()
+                    .map(mr -> {
+                        MedicalRecordDto rec = new MedicalRecordDto();
+                        rec.setDate(mr.getDate() != null ? mr.getDate().toString() : null);
+                        rec.setDescription(mr.getDescription());
+                        rec.setTreatment(mr.getTreatment());
+                        return rec;
+                    })
+                    .collect(Collectors.toList());
+            dto.setMedicalRecords(medicalRecords);
+
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Client getClientByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return clientRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.vetapp.veterinarysystem.service;
 import com.vetapp.veterinarysystem.dto.ClientDetailDto;
 import com.vetapp.veterinarysystem.dto.ClientDto;
 import com.vetapp.veterinarysystem.dto.PetInfoDto;
+import com.vetapp.veterinarysystem.model.Client;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface ClientService {
     List<PetInfoDto> getPetsOfClient(String username);
     ClientDetailDto getClientDetailByUsername(String username);
         void deleteClient(Long id);
+
+
+    Client getClientByUsername(String username);
 }

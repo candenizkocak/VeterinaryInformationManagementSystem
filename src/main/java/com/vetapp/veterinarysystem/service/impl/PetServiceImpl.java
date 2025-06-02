@@ -62,6 +62,11 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
+    public List<Pet> getPetsByClient(Client client) {
+        return petRepository.findByClient(client);
+    }
+
+    @Override
     public void deletePet(int id) {
         petRepository.deleteById(id);
     }
@@ -69,5 +74,16 @@ public class PetServiceImpl implements PetService {
     @Override
     public List<Pet> getPetsByNameContaining(String keyword) {
         return petRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+
+    public void deletePetById(int id) {
+        petRepository.deleteById(id);
+    }
+
+
+    @Override
+    public void save(Pet pet) {
+        petRepository.save(pet);
     }
 }

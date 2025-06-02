@@ -1,12 +1,12 @@
 package com.vetapp.veterinarysystem.controller;
 
 import com.vetapp.veterinarysystem.dto.PetInfoDto;
-import com.vetapp.veterinarysystem.model.User;
+import com.vetapp.veterinarysystem.model.*;
 import com.vetapp.veterinarysystem.repository.ClientRepository;
 import com.vetapp.veterinarysystem.repository.UserRepository;
 import com.vetapp.veterinarysystem.dto.ClientDetailDto;
 import com.vetapp.veterinarysystem.dto.ClientDto;
-import com.vetapp.veterinarysystem.service.ClientService;
+import com.vetapp.veterinarysystem.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,12 +25,18 @@ public class ClientController {
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
 
+    // Yeni eklenenler:
+    private final PetService petService;
+    private final SpeciesService speciesService;
+    private final BreedService breedService;
+    private final GenderService genderService;
+
+    // --- DTO'lu KISIMLAR AYNEN KALIYOR ---
     @PostMapping
     public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto clientDto) {
         return ResponseEntity.ok(clientService.createClient(clientDto));
     }
 
-    // Yeni: Register formunu gösteren GET endpoint
     @GetMapping("/register")
     public String showClientRegistrationForm(Model model, Principal principal) {
         if (principal == null) {
@@ -40,7 +46,6 @@ public class ClientController {
         return "client/register_client";
     }
 
-    // Register formunu işleyen POST endpoint (zaten vardı)
     @PostMapping("/register")
     public String processClientRegistration(@ModelAttribute("clientDto") ClientDto clientDto, Principal principal) {
         if (principal == null) return "redirect:/login";
@@ -51,7 +56,6 @@ public class ClientController {
         return "redirect:/";
     }
 
-    // ID ile client getirme (mapping değişti!)
     @GetMapping("/detail/{id}")
     public ResponseEntity<ClientDto> getClient(@PathVariable Long id) {
         return ResponseEntity.ok(clientService.getClientById(id));
@@ -74,7 +78,7 @@ public class ClientController {
     }
 
     @GetMapping("/animals")
-    public String getMyAnimals(Principal principal, Model model) {
+    public String getMyAnimalsApi(Principal principal, Model model) {
         if (principal == null) return "redirect:/login";
 
         String username = principal.getName();
@@ -83,4 +87,68 @@ public class ClientController {
         model.addAttribute("pets", pets);
         return "client/my_animals";
     }
+
+
+    @GetMapping("/my-animals")
+    public String getMyAnimals(Model model, Principal principal) {
+        if (principal == null) return "redirect:/login";
+        String username = principal.getName();
+
+        List<PetInfoDto> pets = clientService.getPetsOfClient(username);
+
+        model.addAttribute("pets", pets);
+        return "client/my_animals";
+    }
+
+
+
+    @GetMapping("/add-animal")
+    public String showAddAnimalForm(Model model, Principal principal) {
+        if (principal == null) return "redirect:/login";
+
+        model.addAttribute("pet", new Pet());
+        model.addAttribute("speciesList", speciesService.getAllSpecies());
+        model.addAttribute("breedList", breedService.getAllBreeds());
+        model.addAttribute("genderList", genderService.getAllGenders());
+
+        return "client/add_animal";
+    }
+
+    @PostMapping("/add-animal")
+    public String addAnimal(@ModelAttribute("pet") Pet pet, Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+
+        String username = principal.getName();
+        Client client = clientService.getClientByUsername(username);
+
+        Species species = speciesService.getById(pet.getSpecies().getSpeciesID());
+        Breed breed = breedService.getById(pet.getBreed().getBreedID());
+        Gender gender = genderService.getById(pet.getGender().getGenderID());
+
+        pet.setClient(client);
+        pet.setSpecies(species);
+        pet.setBreed(breed);
+        pet.setGender(gender);
+
+        petService.save(pet);
+
+        model.addAttribute("success", true);
+        model.addAttribute("pet", new Pet()); // Formu sıfırla
+        model.addAttribute("speciesList", speciesService.getAllSpecies());
+        model.addAttribute("breedList", breedService.getAllBreeds());
+        model.addAttribute("genderList", genderService.getAllGenders());
+
+        return "client/add_animal";
+
+    }
+
+    @PostMapping("/delete-animal/{id}")
+    public String deleteAnimal(@PathVariable("id") int id, Principal principal) {
+        if (principal == null) return "redirect:/login";
+        petService.deletePetById(id);
+        return "redirect:/api/clients/my-animals";
+    }
+
+
+
 }
