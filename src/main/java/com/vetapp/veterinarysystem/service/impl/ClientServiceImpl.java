@@ -135,6 +135,7 @@ public class ClientServiceImpl implements ClientService {
 
         return client.getPets().stream().map(pet -> {
             PetInfoDto dto = new PetInfoDto();
+            dto.setId(pet.getPetID().intValue()); //bu kısmı değiştirdim dto dan geleni dönüştürüyor bu sayede sadece burası için değişti
             dto.setName(pet.getName());
             dto.setSpecies(pet.getSpecies().getSpeciesName());
             dto.setBreed(pet.getBreed().getBreedName());
@@ -162,6 +163,8 @@ public class ClientServiceImpl implements ClientService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+
 
     @Override
     public Client getClientByUsername(String username) {

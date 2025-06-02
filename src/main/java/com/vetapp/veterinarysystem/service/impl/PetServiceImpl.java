@@ -2,6 +2,7 @@ package com.vetapp.veterinarysystem.service.impl;
 
 import com.vetapp.veterinarysystem.model.*;
 import com.vetapp.veterinarysystem.repository.*;
+import com.vetapp.veterinarysystem.service.MedicalRecordService;
 import com.vetapp.veterinarysystem.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class PetServiceImpl implements PetService {
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
     private final GenderRepository genderRepository;
+    private final MedicalRecordService medicalRecordService;
 
     @Override
     public List<Pet> getAllPets() {
@@ -77,10 +79,20 @@ public class PetServiceImpl implements PetService {
     }
 
 
+    @Override
     public void deletePetById(int id) {
-        petRepository.deleteById(id);
+        Pet pet = petRepository.findById(id).orElse(null);
+        if (pet != null) {
+            List<MedicalRecord> records = medicalRecordService.getMedicalRecordsByPetId((long) id);
+            for (MedicalRecord record : records) {
+                medicalRecordService.deleteMedicalRecord(record.getMedicalRecordId());
+            }
+            petRepository.delete(pet);
+            System.out.println("Pet ve ilişkili kayıtlar silindi: " + id);
+        } else {
+            System.out.println("Pet bulunamadı: " + id);
+        }
     }
-
 
     @Override
     public void save(Pet pet) {

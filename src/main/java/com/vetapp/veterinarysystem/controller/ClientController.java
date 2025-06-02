@@ -144,11 +144,10 @@ public class ClientController {
 
     @PostMapping("/delete-animal/{id}")
     public String deleteAnimal(@PathVariable("id") int id, Principal principal) {
-        if (principal == null) return "redirect:/login";
+        System.out.println("Silme işlemi ID: " + id);
         petService.deletePetById(id);
         return "redirect:/api/clients/my-animals";
     }
-
 
 
 }
