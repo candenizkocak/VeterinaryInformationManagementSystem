@@ -13,7 +13,7 @@ public class PetInfoDto {
     private String gender;
     private String clinicName;
     private int age;
-    private List<String> vaccineNames;  // Aşılar
+    // Changed this line:
+    private List<VaccinationDto> vaccinations; // Changed from List<String> vaccineNames
     private List<MedicalRecordDto> medicalRecords; // Tedaviler ve hastalıklar
 }
-

@@ -8,6 +8,22 @@
 <!-- Font Awesome (for icons) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+<style>
+    .btn-cancel-sm {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 1.15em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%!important;
+    }
+    .btn-cancel-sm span {
+        line-height: 1;
+    }
+
+</style>
 <!-- Body -->
 <body id="pageBody" class="bg-light">
 <div class="container py-5">
@@ -80,10 +96,13 @@
                                     <td class="text-center">
                                         <c:if test="${appt.status == 'Planned'}">
                                             <form action="${pageContext.request.contextPath}/api/clients/appointments/cancel/${appt.appointmentId}" method="post" style="display:inline;">
-                                                <button type="submit" class="btn btn-outline-danger btn-lg rounded-circle shadow-sm" title="Cancel Appointment"
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger shadow-sm btn-cancel-sm"
+                                                        title="Cancel Appointment"
                                                         onclick="return confirm('Are you sure you want to cancel this appointment?')">
-                                                    <span style="font-size:1.3em;">🐾</span>
+                                                    <span style="font-size:1.15em;">🐾</span>
                                                 </button>
+
                                             </form>
                                         </c:if>
                                         <c:if test="${appt.status != 'Planned'}">

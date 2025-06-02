@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%-- REMOVED: <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> --%>
 <html>
 <head>
     <title>My Animals</title>
@@ -15,13 +16,21 @@
         .btn-paw { font-size:1.1rem; }
         .action-btns { margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;}
         .card-table th, .card-table td { vertical-align: middle; }
+        /* Style for upcoming vaccinations */
+        .upcoming-vaccine {
+            font-weight: bold;
+            color: #0d6efd; /* Bootstrap primary blue */
+        }
+        .past-vaccine {
+            color: #6c757d; /* Bootstrap secondary gray */
+        }
     </style>
 </head>
 <body>
 <jsp:include page="navbar.jsp"/>
 
 <div class="container py-4">
-    <a href="/" class="btn btn-outline-secondary mb-4">&larr; Back to Home</a>
+    <a href="/" class="btn btn-outline-secondary mb-4">← Back to Home</a>
 
     <h2 class="mb-4 text-primary text-center" style="font-weight:700; letter-spacing:.5px;">
         <i class="bi bi-paw"></i> My Animals
@@ -75,24 +84,55 @@
                         </div>
                     </div>
 
-                    <!-- Vaccinations Modal -->
+                    <!-- Vaccinations Modal (MODIFIED) -->
                     <div class="modal fade" id="vaccinesModal${pet.id}" tabindex="-1" aria-labelledby="vaccinesModalLabel${pet.id}" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header bg-success-subtle">
                                     <h5 class="modal-title" id="vaccinesModalLabel${pet.id}">
-                                        <i class="bi bi-shield-plus text-success"></i> Vaccinations of ${pet.name}
+                                        <i class="bi bi-shield-plus text-success"></i> Vaccination History & Upcoming for ${pet.name}
                                     </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <c:choose>
-                                        <c:when test="${not empty pet.vaccineNames}">
-                                            <ul>
-                                                <c:forEach var="vaccine" items="${pet.vaccineNames}">
-                                                    <li>${vaccine}</li>
+                                        <c:when test="${not empty pet.vaccinations}">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>Vaccine Name</th>
+                                                    <th>Date Administered</th>
+                                                    <th>Next Due Date</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <c:forEach var="vacc" items="${pet.vaccinations}">
+                                                    <tr>
+                                                        <td>${vacc.vaccineName}</td>
+                                                        <td>${vacc.dateAdministered}</td> <%-- Use pre-formatted string --%>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${vacc.upcoming}"> <%-- Use the boolean flag directly --%>
+                                                                    <span class="upcoming-vaccine">
+                                                                        ${vacc.nextDueDate} (Upcoming)
+                                                                    </span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:if test="${vacc.nextDueDate ne 'N/A'}"> <%-- Check if it's not N/A, 'N/A' means no next due date set or it's not applicable --%>
+                                                                        <span class="past-vaccine">
+                                                                            ${vacc.nextDueDate} (Past Due / Completed)
+                                                                        </span>
+                                                                    </c:if>
+                                                                    <c:if test="${vacc.nextDueDate eq 'N/A'}">
+                                                                        N/A
+                                                                    </c:if>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                    </tr>
                                                 </c:forEach>
-                                            </ul>
+                                                </tbody>
+                                            </table>
                                         </c:when>
                                         <c:otherwise>
                                             <div class="alert alert-secondary">No vaccination records found.</div>
@@ -115,10 +155,10 @@
                                 <div class="modal-body">
                                     <c:choose>
                                         <c:when test="${not empty pet.medicalRecords}">
-                                            <ul>
+                                            <ul class="list-group list-group-flush">
                                                 <c:forEach var="record" items="${pet.medicalRecords}">
                                                     <c:if test="${not empty record.treatment}">
-                                                        <li>
+                                                        <li class="list-group-item">
                                                             <strong>Date:</strong> ${record.date} <br/>
                                                             <strong>Treatment:</strong> ${record.treatment}
                                                         </li>
@@ -147,10 +187,10 @@
                                 <div class="modal-body">
                                     <c:choose>
                                         <c:when test="${not empty pet.medicalRecords}">
-                                            <ul>
+                                            <ul class="list-group list-group-flush">
                                                 <c:forEach var="record" items="${pet.medicalRecords}">
                                                     <c:if test="${not empty record.description}">
-                                                        <li>
+                                                        <li class="list-group-item">
                                                             <strong>Date:</strong> ${record.date} <br/>
                                                             <strong>Diagnosis:</strong> ${record.description}
                                                         </li>

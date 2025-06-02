@@ -22,4 +22,5 @@ public interface ClientService {
 
     boolean changePassword(String username, PasswordChangeDto dto);
 
+
 }

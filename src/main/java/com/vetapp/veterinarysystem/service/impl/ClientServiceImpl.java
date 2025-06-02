@@ -13,13 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate; // Keep this import as you still use LocalDate in Java
+import java.time.format.DateTimeFormatter; // Import DateTimeFormatter
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public
-class ClientServiceImpl implements ClientService {
+public class ClientServiceImpl implements ClientService {
+
+    // Define a DateTimeFormatter for consistent date formatting
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
@@ -100,12 +104,24 @@ class ClientServiceImpl implements ClientService {
             dto.setClinicName(pet.getClinic() != null ? pet.getClinic().getClinicName() : "Unknown");
             dto.setAge(pet.getAge());
 
-            // Aşı isimlerini alıyoruz:
-            List<String> vaccineNames = vaccinationRepository.findByPet(pet).stream()
-                    .map(v -> v.getVaccineType().getVaccineName())
-                    .distinct()
+            // --- MODIFIED SECTION ---
+            List<VaccinationDto> vaccinations = vaccinationRepository.findByPet(pet).stream()
+                    .map(v -> {
+                        VaccinationDto vaccDto = new VaccinationDto();
+                        vaccDto.setVaccineName(v.getVaccineType().getVaccineName());
+                        // Format LocalDate to String
+                        vaccDto.setDateAdministered(v.getDateAdministered() != null ? v.getDateAdministered().format(DATE_FORMATTER) : "N/A");
+                        vaccDto.setNextDueDate(v.getNextDueDate() != null ? v.getNextDueDate().format(DATE_FORMATTER) : "N/A");
+                        // Calculate upcoming status
+                        vaccDto.setUpcoming(v.getNextDueDate() != null && v.getNextDueDate().isAfter(LocalDate.now()));
+                        return vaccDto;
+                    })
+                    // Optional: Sort vaccinations by nextDueDate to show upcoming ones first
+                    .sorted(Comparator.comparing(VaccinationDto::isUpcoming).reversed() // true (upcoming) first
+                            .thenComparing(v -> v.getNextDueDate().equals("N/A") ? LocalDate.MAX : LocalDate.parse(v.getNextDueDate(), DATE_FORMATTER))) // then by date
                     .collect(Collectors.toList());
-            dto.setVaccineNames(vaccineNames);
+            dto.setVaccinations(vaccinations);
+            // --- END MODIFIED SECTION ---
 
             // Tedavi kayıtlarını MedicalRecordDto olarak alıyoruz
             List<MedicalRecordDto> medicalRecords = pet.getMedicalRecords().stream()
@@ -135,7 +151,7 @@ class ClientServiceImpl implements ClientService {
 
         return client.getPets().stream().map(pet -> {
             PetInfoDto dto = new PetInfoDto();
-            dto.setId(pet.getPetID().intValue()); //bu kısmı değiştirdim dto dan geleni dönüştürüyor bu sayede sadece burası için değişti
+            dto.setId(pet.getPetID().intValue());
             dto.setName(pet.getName());
             dto.setSpecies(pet.getSpecies().getSpeciesName());
             dto.setBreed(pet.getBreed().getBreedName());
@@ -143,16 +159,37 @@ class ClientServiceImpl implements ClientService {
             dto.setClinicName(pet.getClinic() != null ? pet.getClinic().getClinicName() : "Unknown");
             dto.setAge(pet.getAge());
 
-            List<String> vaccineNames = vaccinationRepository.findByPet(pet).stream()
-                    .map(v -> v.getVaccineType().getVaccineName())
-                    .distinct()
+            // --- MODIFIED SECTION ---
+            List<VaccinationDto> vaccinations = vaccinationRepository.findByPet(pet).stream()
+                    .map(v -> {
+                        VaccinationDto vaccDto = new VaccinationDto();
+                        vaccDto.setVaccineName(v.getVaccineType().getVaccineName());
+                        // Format LocalDate to String
+                        vaccDto.setDateAdministered(v.getDateAdministered() != null ? v.getDateAdministered().format(DATE_FORMATTER) : "N/A");
+                        vaccDto.setNextDueDate(v.getNextDueDate() != null ? v.getNextDueDate().format(DATE_FORMATTER) : "N/A");
+                        // Calculate upcoming status
+                        vaccDto.setUpcoming(v.getNextDueDate() != null && v.getNextDueDate().isAfter(LocalDate.now()));
+                        return vaccDto;
+                    })
+                    // Optional: Sort vaccinations by nextDueDate to show upcoming ones first
+                    .sorted(Comparator.comparing(VaccinationDto::isUpcoming).reversed() // true (upcoming) first
+                            .thenComparing(v -> {
+                                if (v.getNextDueDate().equals("N/A")) return LocalDate.MAX; // Treat N/A as very far future for sorting
+                                try {
+                                    return LocalDate.parse(v.getNextDueDate(), DATE_FORMATTER);
+                                } catch (java.time.format.DateTimeParseException e) {
+                                    // Handle parsing error if nextDueDate format is inconsistent
+                                    return LocalDate.MAX;
+                                }
+                            }))
                     .collect(Collectors.toList());
-            dto.setVaccineNames(vaccineNames);
+            dto.setVaccinations(vaccinations);
+            // --- END MODIFIED SECTION ---
 
             List<MedicalRecordDto> medicalRecords = pet.getMedicalRecords().stream()
                     .map(mr -> {
                         MedicalRecordDto rec = new MedicalRecordDto();
-                        rec.setDate(mr.getDate() != null ? mr.getDate().toString() : null);
+                        rec.setDate(mr.getDate() != null ? mr.getDate().toString() : null); // Keep as string or format if needed
                         rec.setDescription(mr.getDescription());
                         rec.setTreatment(mr.getTreatment());
                         return rec;
@@ -163,7 +200,6 @@ class ClientServiceImpl implements ClientService {
             return dto;
         }).collect(Collectors.toList());
     }
-
 
 
     @Override
@@ -201,12 +237,6 @@ class ClientServiceImpl implements ClientService {
     }
 
 
-    @Override
-    public void deleteClient(Long id) {
-        clientRepository.deleteById(id);
-    }
-
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -225,6 +255,11 @@ class ClientServiceImpl implements ClientService {
         user.setPasswordHash(passwordEncoder.encode(dto.getNewPassword()));
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public void deleteClient(Long id) { // Implemented here
+        clientRepository.deleteById(id);
     }
 
 }
