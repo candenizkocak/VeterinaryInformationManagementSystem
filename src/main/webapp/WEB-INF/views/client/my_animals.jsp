@@ -6,9 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css"> <%-- Centralized theme styles --%>
+
+    <!-- Genel tema CSS'i (global stiller için) -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
+    <!-- Bu sayfaya özel CSS -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/client/my_animals.css">
+
 </head>
-<body id="pageBody" class="bg-light"> <%-- body id ve class buraya taşındı --%>
+<body id="pageBody" class="bg-light">
 <jsp:include page="navbar.jsp"/> <%-- Navbar include'u body içine taşındı --%>
 
 <div class="container py-4">
@@ -27,14 +32,14 @@
         <c:when test="${not empty pets}">
             <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
                 <c:forEach var="pet" items="${pets}" varStatus="status">
-                    <div class="col stagger-in-item" style="opacity: 0; transform: translateY(20px);"> <%-- Animasyon başlangıç stilleri --%>
-                        <div class="card animal-card h-100 shadow-sm"> <%-- shadow-sm eklendi --%>
-                            <div class="card-body pb-3 d-flex flex-column"> <%-- flex-column eklendi --%>
-                                <div class="d-flex justify-content-center mb-3"> <%-- mb-2 -> mb-3 --%>
+                    <div class="col stagger-in-item" style="opacity: 0; transform: translateY(20px);">
+                        <div class="card animal-card h-100 shadow-sm">
+                            <div class="card-body pb-3 d-flex flex-column">
+                                <div class="d-flex justify-content-center mb-3">
                                     <i class="bi bi-paw paw"></i>
                                 </div>
-                                <h5 class="card-title text-center mb-3">${pet.name}</h5> <%-- h5'e çevrildi, mb-1 -> mb-3 --%>
-                                <ul class="list-group list-group-flush flex-grow-1"> <%-- flex-grow-1 eklendi --%>
+                                <h5 class="card-title text-center mb-3">${pet.name}</h5>
+                                <ul class="list-group list-group-flush flex-grow-1">
                                     <li class="list-group-item animal-attr"><b>Species:</b> ${pet.species}</li>
                                     <li class="list-group-item animal-attr"><b>Breed:</b> ${pet.breed}</li>
                                     <li class="list-group-item animal-attr"><b>Gender:</b> ${pet.gender}</li>
@@ -228,16 +233,14 @@
                 card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
-            }, index * 100); // Her kart için 100ms gecikme
+            }, index * 100);
         });
     });
 
     // Theme script (from navbar.jsp, ensure consistency across Client module)
-    // Bu scriptin navbar.jsp'deki ile aynı olduğundan emin olun veya navbar'dan import edin.
-    // Tema geçişi genel "body.bg-dark" sınıfını yönetir, bu CSS dosyası da ona göre şekillenir.
     const themeToggleSwitch = document.getElementById('themeToggleSwitch');
     const body = document.getElementById('pageBody');
-    const navbar = document.getElementById('mainNavbar'); // navbar.jsp'deki id
+    const navbar = document.getElementById('mainNavbar');
 
     function applyTheme(theme) {
         if (theme === 'dark') {
@@ -261,8 +264,7 @@
 
         const sliderBefore = document.querySelector('.slider:before');
         if (sliderBefore) {
-            // İkonları navbar.jsp'deki script yönetecek, burada tekrar tanımlamak yerine
-            // sadece tema değişimini tetikleyen ana fonksiyonun bir parçası olarak kalabilir.
+            sliderBefore.style.backgroundImage = theme === 'dark' ? "url('<%= request.getContextPath() %>/img/moon.gif')" : "url('<%= request.getContextPath() %>/img/sun.gif')";
         }
     }
 

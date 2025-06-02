@@ -1,4 +1,3 @@
-<%-- src/main/webapp/WEB-INF/views/client/book_appointment.jsp --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -6,104 +5,23 @@
     <title>Book Appointment</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+    <!-- Genel tema CSS'i (global stiller için) -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
-    <style>
-        /* ... CSS stilleri ... */
-        .appt-card {
-            max-width: 550px; margin: 40px auto; border-radius: 18px;
-            box-shadow: 0 8px 36px 0 #1c4c8c14; padding: 35px 32px 28px 32px;
-            background: #fff;
-        }
-        .appt-title {
-            font-size: 2.0rem; color: #1066ee; font-weight: 600; text-align: center; margin-bottom: 27px;
-        }
-        .form-label { font-weight: 500; color: #27496d;}
-        .form-control, .form-select { border-radius: 12px; font-size: 1.09rem; padding: 11px 12px;}
-        .btn-appt { background: #157afe; border: none; font-size: 1.08rem; padding: 13px; border-radius: 10px; font-weight: 500; letter-spacing: 1px; margin-top: 10px; transition: 0.2s;}
-        .btn-appt:hover { background: #1066ee;}
-        .alert { border-radius: 10px; font-size: 1.08rem; margin-bottom: 23px;}
-        /* Dark theme specific adjustments */
-        body.bg-dark .appt-card {
-            background: #2b2b2b;
-            color: #fff;
-            box-shadow: 0 8px 36px 0 rgba(0, 0, 0, 0.4);
-        }
-        body.bg-dark .appt-title {
-            color: #6da7f7; /* Lighter blue for dark mode */
-        }
-        body.bg-dark .form-label {
-            color: #ccc;
-        }
-        body.bg-dark .form-control, body.bg-dark .form-select {
-            background-color: #1e1e1e !important;
-            color: #fff !important;
-            border-color: #555 !important;
-        }
-        body.bg-dark .form-control::placeholder {
-            color: #aaa !important;
-        }
-        body.bg-dark .form-select option {
-            background-color: #1e1e1e;
-            color: #fff;
-        }
-        .btn-main-appt {
-            background: linear-gradient(90deg, #36b0ff 0%, #1170e6 100%);
-            color: #fff;
-            font-weight: 600;
-            font-size: 1rem;
-            border: none;
-            border-radius: 14px;
-            padding: 0.78rem 0;
-            width: 100%;
-            max-width: 340px;
-            margin: 20px auto 0 auto;
-            letter-spacing: 0.3px;
-            box-shadow: 0 3px 18px 0 #1170e61a;
-            display: block;
-            transition: all 0.17s cubic-bezier(.4,0,.2,1);
-        }
-        .btn-main-appt:hover, .btn-main-appt:focus {
-            background: linear-gradient(90deg, #1788d0 0%, #0062be 100%);
-            color: #fff;
-            box-shadow: 0 8px 28px 0 #1170e631;
-            transform: translateY(-1px) scale(1.027);
-            outline: none;
-        }
+    <!-- Bu sayfaya özel CSS -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/client/book_appointment.css">
 
-        .btn-secondary-appt {
-            background: #fff !important;
-            color: #1170e6 !important;
-            font-weight: 600;
-            border: 2px solid #36b0ff !important;
-            border-radius: 14px;
-            font-size: 1rem;
-            padding: 0.78rem 0;
-            width: 100%;
-            max-width: 340px;
-            margin: 15px auto 0 auto;
-            box-shadow: 0 2px 8px 0 #1170e612;
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            transition: all 0.17s cubic-bezier(.4,0,.2,1);
-            outline: none;
-        }
-        .btn-secondary-appt:hover, .btn-secondary-appt:focus {
-            background: #e3f2fd !important;
-            color: #1976d2 !important;
-            border-color: #1976d2 !important;
-            box-shadow: 0 6px 18px 0 #36b0ff2c;
-            text-decoration: none;
-        }
-
-
-    </style>
+    <%--
+    ÖNEMLİ: Bu JSP'nin orijinalinde bulunan <style> bloğundaki stil kuralları buraya taşındı:
+    src/main/resources/static/css/client/book_appointment.css
+    --%>
 </head>
-<jsp:include page="navbar.jsp"/>
 <body id="pageBody">
-
+<jsp:include page="navbar.jsp"/> <%-- Client modülüne özel navbar'ı dahil eder --%>
 
 <div class="appt-card">
+    <%-- Burası orijinal JSP'nin ana HTML içeriğiydi --%>
     <div class="appt-title"><i class="bi bi-calendar-plus"></i> Book New Appointment</div>
 
     <c:if test="${not empty successMessage}">
@@ -119,7 +37,8 @@
             <select name="petId" id="petSelect" class="form-select" required>
                 <option value="">Select a pet</option>
                 <c:forEach var="pet" items="${pets}">
-                    <option value="${pet.petID}">${pet.name} (${pet.species.speciesName})</option>                </c:forEach>
+                    <option value="${pet.petID}">${pet.name} (${pet.species.speciesName})</option>
+                </c:forEach>
             </select>
         </div>
 
@@ -165,34 +84,32 @@
                 Back to Appointments
             </a>
         </div>
-
-
     </form>
 </div>
 
 <!-- Bootstrap JS (for modals) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Bu JavaScript bloğu, appointments.jsp'deki DataTables dışındaki tek JavaScript fonksiyonu gibi
+    // görünüyor ve tema geçişiyle ilgili değil. Dolayısıyla olduğu gibi kalabilir.
     $(document).ready(function () {
-        const petSelect = $('#petSelect'); // Pet select eklendi
+        const petSelect = $('#petSelect');
         const clinicSelect = $('#clinicSelect');
         const dateInput = $('#dateInput');
         const veterinarySelect = $('#veterinarySelect');
         const timeSelect = $('#timeSelect');
 
-        // Function to fetch and populate veterinarians based on clinic and date
         function fetchVeterinariesAndResetTimes() {
             const clinicId = clinicSelect.val();
-            const selectedDate = dateInput.val(); // YYYY-MM-DD formatında string
+            const selectedDate = dateInput.val();
             console.log('Fetching vets for clinic:', clinicId, 'on date:', selectedDate);
 
             veterinarySelect.empty().append('<option value="">Loading veterinarians...</option>');
-            veterinarySelect.prop('disabled', true); // Yeni istek başladığında disable et
+            veterinarySelect.prop('disabled', true);
 
             timeSelect.empty().append('<option value="">Select veterinary first</option>');
-            timeSelect.prop('disabled', true); // Veterinerler yüklenirken saati de disable et
+            timeSelect.prop('disabled', true);
 
             if (clinicId && selectedDate) {
                 $.ajax({
@@ -204,17 +121,17 @@
                         if (vets && vets.length > 0) {
                             vets.forEach(function(vet) {
                                 veterinarySelect.append($('<option>', {
-                                    value: vet.veterinaryId, // HATA BURADAYDI: veterinaryID yerine veterinaryId olmalı
+                                    value: vet.veterinaryId,
                                     text: vet.firstName + ' ' + vet.lastName + ' (' + vet.specialization + ')'
                                 }));
                             });
-                            veterinarySelect.prop('disabled', false); // Başarılıysa enable et
+                            veterinarySelect.prop('disabled', false);
                         } else {
                             veterinarySelect.append('<option value="">No veterinarians available for this clinic/date</option>');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error fetching veterinarians:", status, error); // Hata logu
+                        console.error("Error fetching veterinarians:", status, error);
                         veterinarySelect.empty().append('<option value="">Error loading veterinarians</option>');
                     }
                 });
@@ -223,7 +140,6 @@
             }
         }
 
-        // Function to fetch and populate available time slots
         function fetchAvailableSlots() {
             const clinicId = clinicSelect.val();
             const veterinaryId = veterinarySelect.val();
@@ -261,14 +177,10 @@
             }
         }
 
-        // Event listeners
         clinicSelect.on('change', fetchVeterinariesAndResetTimes);
         dateInput.on('change', fetchVeterinariesAndResetTimes);
-
         veterinarySelect.on('change', fetchAvailableSlots);
 
-        // Initial call on page load if clinic/date/vet are pre-selected (not in this case, but good practice)
-        // If you were editing an appointment, you'd call fetchVeterinariesAndResetTimes here with initial values
         if (clinicSelect.val() && dateInput.val()) {
             fetchVeterinariesAndResetTimes();
         }

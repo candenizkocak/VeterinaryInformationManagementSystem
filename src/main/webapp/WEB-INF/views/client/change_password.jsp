@@ -4,63 +4,23 @@
     <title>Change Password</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: #f7faff;
-        }
-        .pw-card {
-            max-width: 430px;
-            margin: 48px auto 0 auto;
-            border-radius: 18px;
-            box-shadow: 0 8px 36px 0 #1c4c8c14;
-            padding: 32px 36px 28px 36px;
-            background: #fff;
-        }
-        .pw-title {
-            font-size: 2rem;
-            color: #1066ee;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 35px;
-            letter-spacing: 1px;
-        }
-        .form-label {
-            font-weight: 500;
-            color: #27496d;
-        }
-        .form-control {
-            border-radius: 12px;
-            font-size: 1.08rem;
-            padding: 12px;
-        }
-        .btn-pw {
-            background: #157afe;
-            border: none;
-            font-size: 1.1rem;
-            padding: 13px;
-            border-radius: 10px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
-        .btn-pw:hover {
-            background: #1066ee;
-        }
-        .alert {
-            border-radius: 10px;
-            font-size: 1.07rem;
-            margin-bottom: 22px;
-        }
-        @media (max-width: 700px) {
-            .pw-card { padding: 18px 8px 18px 8px; }
-            .pw-title { font-size: 1.3rem; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+    <!-- Genel tema CSS'i -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
+    <!-- Bu sayfaya özel CSS -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/client/change_password.css">
+
+    <%--
+    ÖNEMLİ: Bu JSP'nin orijinalinde bulunan <style> bloğundaki stil kuralları buraya taşındı:
+    src/main/resources/static/css/client/change_password.css
+    --%>
 </head>
 <body id="pageBody" class="bg-light">
-<jsp:include page="navbar.jsp"/>
+<jsp:include page="navbar.jsp"/> <%-- Client modülüne özel navbar'ı dahil eder --%>
+
 <div class="pw-card">
+    <%-- Burası orijinal JSP'nin ana HTML içeriğiydi --%>
     <div class="pw-title"><i class="bi bi-shield-lock"></i> Change Password</div>
     <c:if test="${success}">
         <div class="alert alert-success text-center">Your password has been changed successfully!</div>
@@ -81,11 +41,14 @@
             <label class="form-label">Confirm New Password:</label>
             <input type="password" name="newPasswordConfirm" class="form-control" required minlength="6" autocomplete="new-password"/>
         </div>
-        <button type="submit" class="btn btn-pw w-100">Change Password</button>
+        <button type="submit" class="btn btn-change-password">Change Password</button>
+
+        <a href="/" class="btn btn-back-home-card">
+            <i class="bi bi-arrow-left"></i> Back to Home
+        </a>
     </form>
 </div>
 <!-- Bootstrap iconlar için (isteğe bağlı) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

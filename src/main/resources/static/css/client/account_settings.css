@@ -1,0 +1,211 @@
+/* src/main/resources/static/css/client/account_settings.css */
+
+/* Genel Arka Plan ve Metin Renkleri */
+/* Body arka planını kartın belirgin durması için biraz daha koyu açık gri yapalım */
+body {
+    background: #f0f2f5; /* Hafif gri arka plan */
+    color: #212529; /* Açık mod varsayılan metin rengi */
+}
+body.bg-dark {
+    background: #1a1a1a !important; /* Koyu mod arka plan */
+    color: #e0e0e0 !important; /* Koyu mod metin rengi */
+}
+
+/* Ayarlar Kartı */
+.settings-card {
+    max-width: 500px;
+    margin: 40px auto;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* Gölgeyi biraz daha belirginleştirdim */
+    padding: 32px 36px 28px 36px;
+    background: #fff; /* Açık mod kart arka planı (beyaz) */
+    border: none; /* Kenarlık kaldırıldı */
+}
+body.bg-dark .settings-card {
+    background: #2b2b2b !important; /* Koyu mod kart arka planı */
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4) !important;
+    color: #e0e0e0; /* Koyu mod kart metin rengi */
+}
+
+/* Başlık rengi */
+.settings-title {
+    font-size: 2.2rem;
+    color: #1066ee; /* Açık mod varsayılanı */
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 35px;
+}
+body.bg-dark .settings-title {
+    color: #6da7f7; /* Koyu mod başlık rengi */
+}
+
+/* Form etiketleri */
+.form-label {
+    font-weight: 500;
+    color: #27496d; /* Açık mod varsayılanı */
+}
+body.bg-dark .form-label {
+    color: #ccc; /* Koyu temada etiket rengi */
+}
+
+/* Form kontrolleri (input, select, textarea) */
+.form-control {
+    border-radius: 12px;
+    font-size: 1.1rem;
+    padding: 12px;
+    background-color: #fff; /* Açık mod varsayılanı */
+    color: #212529; /* Açık mod varsayılan metin rengi */
+    border: 1px solid #ced4da;
+}
+body.bg-dark .form-control {
+    background-color: #1e1e1e !important; /* Koyu temada input arka planı */
+    color: #fff !important; /* Koyu temada input metin rengi */
+    border-color: #555 !important; /* Koyu temada input kenarlığı */
+}
+body.bg-dark .form-control::placeholder {
+    color: #aaa !important; /* Koyu temada placeholder rengi */
+}
+
+/* Kaydet Butonu (btn-save-modern) */
+.btn-save-modern {
+    background: linear-gradient(90deg, #36a2eb 0%, #007bff 100%); /* Daha canlı mavi gradyan */
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.08rem;
+    letter-spacing: 0.3px;
+    border: none;
+    border-radius: 15px;
+    padding: 0.7rem 0;
+    margin-top: 30px;
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.25); /* Daha belirgin ve yumuşak gölge */
+    transition: all 0.25s ease-out; /* Yumuşak geçiş */
+    width: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+.btn-save-modern:hover, .btn-save-modern:focus {
+    background: linear-gradient(90deg, #007bff 0%, #36a2eb 100%); /* Hover'da gradyan yönü/tonu değişimi */
+    color: #e3f2fd; /* Hafif aydınlanma */
+    box-shadow: 0 8px 28px rgba(0, 123, 255, 0.4); /* Hover'da gölge artar */
+    transform: translateY(-2px) scale(1.025); /* Hafif yukarı ve büyüme efekti */
+    outline: none;
+}
+body.bg-dark .btn-save-modern {
+    background: linear-gradient(90deg, #6da7f7 0%, #4a8ee0 100%) !important; /* Koyu mod için daha açık mavi gradyan */
+    color: #212529; /* Koyu modda siyah metin */
+    box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+}
+body.bg-dark .btn-save-modern:hover, body.bg-dark .btn-save-modern:focus {
+    background: linear-gradient(90deg, #4a8ee0 0%, #6da7f7 100%) !important;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.5);
+}
+
+/* Şifre Değiştir Butonu */
+.btn-change-password {
+    width: 100%;
+    background: #e9f5ff; /* Açık ve ferah bir arka plan */
+    color: #007bff; /* Mavi metin */
+    border: 1px solid #c2e0ff; /* İnce, soft kenarlık */
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 1.08rem;
+    padding: 12px 0;
+    margin-top: 32px;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); /* Hafif gölge */
+}
+.btn-change-password:hover {
+    background: #d4ecff; /* Hover'da hafif mavilik */
+    color: #0056b3; /* Metin rengi koyulaşır */
+    border-color: #a0d8ff; /* Kenarlık koyulaşır */
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); /* Hover'da gölge artar */
+}
+body.bg-dark .btn-change-password {
+    background: #3a3a3a !important;
+    color: #8bbfff !important;
+    border-color: #5c9eff !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+body.bg-dark .btn-change-password:hover {
+    background: #494949 !important;
+    color: #c0e0ff !important;
+    border-color: #8bbfff !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+
+/* Divider */
+.divider {
+    border-top: 1px solid #e0e6ef;
+    margin: 32px 0 20px 0;
+}
+body.bg-dark .divider {
+    border-color: #5a5a5a !important;
+}
+
+/* Alert Stilini temaya uygun hale getirme */
+.alert {
+    border-radius: 10px;
+    font-size: 1.09rem;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 8px 0 rgba(0, 153, 102, 0.07); /* Genel gölge ayarı */
+}
+body.bg-dark .alert-success {
+    background-color: #28a745;
+    color: #fff;
+}
+body.bg-dark .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* --- Ana Sayfaya Dön Butonu (Güncellenmiş & Kart İçi) --- */
+.btn-back-home-card {
+    background: #e9f5ff; /* Açık ve ferah bir arka plan */
+    color: #007bff; /* Mavi metin */
+    font-weight: 600;
+    border: 1px solid #c2e0ff; /* İnce, soft kenarlık */
+    border-radius: 14px;
+    font-size: 1rem;
+    padding: 0.78rem 0;
+    width: 100%;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); /* Hafif gölge */
+    outline: none;
+    margin-top: 20px;
+}
+.btn-back-home-card:hover, .btn-back-home-card:focus {
+    background: #d4ecff !important;
+    color: #0056b3 !important;
+    border-color: #a0d8ff !important;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2) !important;
+    transform: translateY(-1px) scale(1.005);
+    text-decoration: none;
+}
+.btn-back-home-card i {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+body.bg-dark .btn-back-home-card {
+    background: #3a3a3a !important;
+    color: #8bbfff !important;
+    border-color: #5c9eff !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+body.bg-dark .btn-back-home-card:hover, body.bg-dark .btn-back-home-card:focus {
+    background: #494949 !important;
+    color: #c0e0ff !important;
+    border-color: #8bbfff !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+
+@media (max-width: 700px) {
+    .settings-card { padding: 18px 8px 18px 8px; }
+    .settings-title { font-size: 1.5rem; }
+    .btn-save-modern { width: 80%; }
+}

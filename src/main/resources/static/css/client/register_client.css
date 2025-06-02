@@ -1,0 +1,144 @@
+/* src/main/resources/static/css/client/register_client.css */
+
+/* Genel arka plan (body.bg-dark tarafından yönetilecek, burada varsayılanı tanımlıyoruz) */
+body {
+    background: #f7faff;
+}
+body.bg-dark {
+    background: #1a1a1a !important;
+    color: #e0e0e0;
+}
+
+/* Kayıt kartı stili */
+.register-card {
+    max-width: 450px;
+    margin: 60px auto 40px auto; /* Üst boşluk artırıldı */
+    border-radius: 20px; /* Daha yuvarlak köşeler */
+    box-shadow: 0 10px 45px 0 rgba(28, 76, 140, 0.18); /* Daha belirgin gölge */
+    padding: 40px 45px 35px 45px; /* İç boşluklar artırıldı */
+    background: #fff;
+    border: none;
+    animation: fadeInScale 0.6s ease-out; /* Kart için animasyon */
+}
+body.bg-dark .register-card {
+    background: #2b2b2b !important;
+    box-shadow: 0 10px 45px 0 rgba(0, 0, 0, 0.45); /* Koyu mod için gölge */
+    color: #e0e0e0;
+}
+
+/* Kart başlığı */
+.register-title {
+    font-size: 2.5rem; /* Daha büyük başlık */
+    color: #1066ee;
+    font-weight: 700; /* Daha kalın font */
+    letter-spacing: 1.2px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+body.bg-dark .register-title {
+    color: #6da7f7;
+}
+
+/* Açıklama metni */
+.register-text {
+    font-size: 1.05rem;
+    color: #555;
+    text-align: center;
+    margin-bottom: 35px;
+    line-height: 1.6;
+}
+body.bg-dark .register-text {
+    color: #bbb;
+}
+
+/* Form etiketleri */
+.form-label {
+    font-weight: 600; /* Daha kalın etiketler */
+    color: #27496d;
+    margin-bottom: 8px; /* Etiket ile input arasında boşluk */
+}
+body.bg-dark .form-label {
+    color: #ccc;
+}
+
+/* Form kontrolleri (input) */
+.form-control {
+    border-radius: 12px;
+    font-size: 1.1rem;
+    padding: 12px;
+    background-color: #f8fafd; /* Hafif arka plan */
+    color: #212529;
+    border: 1px solid #e0e6ef;
+    transition: all 0.3s ease; /* Hover ve focus animasyonu */
+}
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    background-color: #fff;
+}
+body.bg-dark .form-control {
+    background-color: #1e1e1e !important;
+    color: #fff !important;
+    border-color: #555 !important;
+}
+body.bg-dark .form-control:focus {
+    border-color: #6da7f7;
+    box-shadow: 0 0 0 0.25rem rgba(109, 167, 247, 0.35);
+    background-color: #252525 !important;
+}
+body.bg-dark .form-control::placeholder {
+    color: #aaa !important;
+}
+
+/* Buton stili */
+.btn-create-profile {
+    background: linear-gradient(90deg, #1066ee 0%, #2c8aff 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 15px; /* Daha yuvarlak buton */
+    padding: 14px 25px; /* İç boşluklar */
+    width: 80%; /* Genişlik */
+    display: block;
+    margin: 40px auto 0 auto; /* Üst boşluk ve ortalama */
+    box-shadow: 0 8px 30px 0 rgba(16, 102, 238, 0.2); /* Belirgin gölge */
+    transition: all 0.2s ease-out;
+}
+.btn-create-profile:hover, .btn-create-profile:focus {
+    background: linear-gradient(90deg, #2c8aff 0%, #1066ee 100%);
+    box-shadow: 0 12px 40px 0 rgba(16, 102, 238, 0.35);
+    transform: translateY(-2px) scale(1.02);
+    outline: none;
+}
+body.bg-dark .btn-create-profile {
+    background: linear-gradient(90deg, #6da7f7 0%, #a7d9ff 100%) !important;
+    color: #212529; /* Koyu mod için koyu metin */
+    box-shadow: 0 8px 30px 0 rgba(109, 167, 247, 0.35);
+}
+body.bg-dark .btn-create-profile:hover, body.bg-dark .btn-create-profile:focus {
+    background: linear-gradient(90deg, #a7d9ff 0%, #6da7f7 100%) !important;
+    box-shadow: 0 12px 40px 0 rgba(109, 167, 247, 0.5);
+}
+
+/* Animasyon */
+@keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Responsive ayarlamalar */
+@media (max-width: 768px) {
+    .register-card {
+        margin: 30px 15px;
+        padding: 30px 20px;
+    }
+    .register-title {
+        font-size: 2rem;
+    }
+    .btn-create-profile {
+        width: 100%;
+        padding: 12px 20px;
+    }
+}

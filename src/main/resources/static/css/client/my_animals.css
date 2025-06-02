@@ -1,0 +1,203 @@
+/* src/main/resources/static/css/client/my_animals.css */
+
+/* "Book New Appointment" Butonu (YUMUŞAK, MAT) - Bu style aslında appointments.jsp için, ama my_animals.jsp'den de geri dönüş için linklenmiş olabilir. Eğer my_animals.jsp'de doğrudan kullanılmıyorsa bu dosyada olmasına gerek yok. Genel theme.css'te kalabilir veya appointments.css'e taşınabilir. */
+/* Ancak benim ön analizime göre bu stil my_animals.jsp için değildir, bu yüzden buraya almıyorum. */
+
+/* Kartlar ve Genel Öğeler (Bu style appointments.jsp'den alınmıştır, eğer my_animals.jsp'de özelleştirilmemişse genel theme.css'te kalmalıdır. Ancak my_animals.jsp'deki card-like yapılar için kopyalayalım) */
+.card.shadow.rounded-4 {
+    background: #fff;
+    border: none;
+    border-radius: 0.75rem; /* Kart köşeleri */
+}
+body.bg-dark .card.shadow.rounded-4 {
+    background: #2b2b2b !important;
+    color: #e0e0e0;
+}
+.card-body {
+    padding: 1.5rem;
+}
+.card.shadow.rounded-4 .card-body {
+    border-radius: 0.75rem;
+    overflow: hidden; /* İçerideki responsive tablonun köşelerini gizlemek için */
+}
+
+/* Rozetler (Status Badges) - my_animals.jsp'deki Vaccination için kullanılabilir. */
+.badge {
+    font-weight: 600;
+    padding: 0.5em 0.8em;
+    border-radius: 50rem;
+    font-size: 0.85em;
+}
+/* Planned (Turuncu/Sarı) - Eğer vaccinations'da 'upcoming' gibi bir durum varsa kullanılabilir. */
+.badge.bg-warning {
+    background-color: #d89e00 !important; /* Mat turuncu */
+    color: #fff !important;
+}
+body.bg-dark .badge.bg-warning {
+    background-color: #a67c00 !important; /* Koyu mod için daha koyu mat */
+    color: #fff !important;
+}
+/* Completed (Yeşil) */
+.badge.bg-success {
+    background-color: #1b7a42 !important; /* Mat yeşil */
+    color: #fff !important;
+}
+body.bg-dark .badge.bg-success {
+    background-color: #12542c !important; /* Koyu mod için daha da mat */
+    color: #fff !important;
+}
+/* Cancelled (Kırmızı) */
+.badge.bg-danger {
+    background-color: #9c2531 !important; /* Mat kırmızı */
+    color: #fff !important;
+}
+body.bg-dark .badge.bg-danger {
+    background-color: #6a1a21 !important; /* Koyu mod için daha da mat */
+    color: #fff !important;
+}
+/* Diğer Durumlar (Gri) */
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+body.bg-dark .badge.bg-secondary {
+    background-color: #495057 !important;
+    color: #e0e0e0 !important;
+}
+/* Date & Time Badge (Açık/Koyu uyumlu) */
+.badge.bg-light {
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+}
+body.bg-dark .badge.bg-light {
+    background-color: #343a40 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Cancel Butonu - my_animals.jsp'de delete butonu var, bu stile benziyorsa uyarlanabilir. */
+/* .btn-cancel-sm { ... } */
+/* Eğer my_animals.jsp'deki delete butonu için farklı bir stil varsa, onu buraya ekleyin. */
+
+/* my_animals.jsp'ye özgü stiller */
+.animal-card {
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.animal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+body.bg-dark .animal-card {
+    background: #343a40 !important;
+    color: #e0e0e0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+}
+body.bg-dark .animal-card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.paw { /* İkon */
+    font-size: 4em;
+    color: #2c8aff;
+    margin-bottom: 0.5em;
+}
+body.bg-dark .paw {
+    color: #a7d9ff;
+}
+
+.card-title {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #1a59a6;
+}
+body.bg-dark .card-title {
+    color: #cce7ff;
+}
+
+.list-group-item.animal-attr {
+    font-size: 0.95em;
+    padding: 0.6rem 1rem;
+    background-color: transparent; /* Şeffaf olmalı ki kartın rengini alsın */
+    border-color: rgba(0,0,0,0.05);
+}
+body.bg-dark .list-group-item.animal-attr {
+    border-color: #495057 !important;
+    color: #e0e0e0;
+}
+
+.btn-paw {
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    transition: all 0.2s ease-in-out;
+}
+.btn-outline-success.btn-paw { border-color: #28a745; color: #28a745; }
+.btn-outline-success.btn-paw:hover { background-color: #28a745; color: #fff; }
+body.bg-dark .btn-outline-success.btn-paw { border-color: #32995b !important; color: #32995b !important;}
+body.bg-dark .btn-outline-success.btn-paw:hover { background-color: #32995b !important; color: #fff !important;}
+
+.btn-outline-info.btn-paw { border-color: #17a2b8; color: #17a2b8; }
+.btn-outline-info.btn-paw:hover { background-color: #17a2b8; color: #fff; }
+body.bg-dark .btn-outline-info.btn-paw { border-color: #17a2b8 !important; color: #17a2b8 !important;}
+body.bg-dark .btn-outline-info.btn-paw:hover { background-color: #17a2b8 !important; color: #fff !important;}
+
+.btn-outline-warning.btn-paw { border-color: #ffc107; color: #ffc107; }
+.btn-outline-warning.btn-paw:hover { background-color: #ffc107; color: #212529; }
+body.bg-dark .btn-outline-warning.btn-paw { border-color: #ffc107 !important; color: #ffc107 !important;}
+body.bg-dark .btn-outline-warning.btn-paw:hover { background-color: #ffc107 !important; color: #212529 !important;}
+
+.btn-danger.btn-paw { /* Delete button */
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+.btn-danger.btn-paw:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+body.bg-dark .btn-danger.btn-paw {
+    background-color: #b02a37 !important;
+    border-color: #b02a37 !important;
+}
+body.bg-dark .btn-danger.btn-paw:hover {
+    background-color: #a02530 !important;
+    border-color: #90212b !important;
+}
+
+
+/* Staggered Fade-in Animation */
+.stagger-in-item {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Vaccination Modals */
+.upcoming-vaccine {
+    font-weight: bold;
+    color: #28a745; /* Success green */
+}
+body.bg-dark .upcoming-vaccine {
+    color: #32995b; /* Darker green for dark mode */
+}
+.past-vaccine {
+    color: #6c757d; /* Muted grey */
+}
+body.bg-dark .past-vaccine {
+    color: #a0a0a0;
+}
+
+/* No animals found message */
+.no-animals-found .alert {
+    background-color: #ffeeba; /* Default Bootstrap warning */
+    color: #856404;
+    border-color: #ffeeba;
+}
+body.bg-dark .no-animals-found .alert {
+    background-color: #a67c00 !important; /* Darker warning for dark mode */
+    color: #fff !important;
+    border-color: #a67c00 !important;
+}

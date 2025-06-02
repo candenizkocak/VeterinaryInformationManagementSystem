@@ -1,0 +1,176 @@
+
+body {
+    background: #f7faff;
+}
+/* --- Karanlık Mod için Eklenecek CSS BAŞLANGICI --- */
+body.bg-dark {
+    background: #1a1a1a !important; /* Koyu tema için genel arka plan */
+    color: #e0e0e0; /* Varsayılan metin rengi */
+}
+/* Kartın kendisi */
+.add-animal-card {
+    max-width: 480px;
+    margin: 48px auto 0 auto;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 #1c4c8c1c;
+    background: #fff; /* Açık mod varsayılanı */
+    padding: 38px 38px 24px 38px;
+}
+body.bg-dark .add-animal-card {
+    background: #2b2b2b !important; /* Koyu temada kart arka planı */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); /* Koyu temada gölge */
+    color: #fff; /* Koyu temada metin rengi */
+}
+
+/* Başlık rengi */
+.add-animal-title {
+    font-size: 2.1rem;
+    color: #1066ee; /* Açık mod varsayılanı */
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+}
+body.bg-dark .add-animal-title {
+    color: #6da7f7; /* Koyu temada başlık rengi */
+}
+
+/* Form etiketleri */
+.form-label {
+    font-weight: 500;
+    color: #27496d; /* Açık mod varsayılanı */
+}
+body.bg-dark .form-label {
+    color: #ccc; /* Koyu temada etiket rengi */
+}
+
+/* Form kontrolleri (input, select, textarea) */
+.form-control, .form-select {
+    border-radius: 12px;
+    font-size: 1.09rem;
+    padding: 11px 12px;
+    background-color: #fff; /* Açık mod varsayılanı */
+    color: #212529; /* Açık mod varsayılan metin rengi */
+    border: 1px solid #ced4da;
+}
+body.bg-dark .form-control,
+body.bg-dark .form-select {
+    background-color: #1e1e1e !important; /* Koyu temada input arka planı */
+    color: #fff !important; /* Koyu temada input metin rengi */
+    border-color: #555 !important; /* Koyu temada input kenarlığı */
+}
+body.bg-dark .form-control::placeholder {
+    color: #aaa !important; /* Koyu temada placeholder rengi */
+}
+body.bg-dark .form-select option {
+    background-color: #1e1e1e; /* Koyu temada select option arka planı */
+    color: #fff; /* Koyu temada select option metin rengi */
+}
+
+/* Alert stilini temaya uygun hale getirme (isteğe bağlı) */
+body.bg-dark .alert-success {
+    background-color: #28a745;
+    color: #fff;
+}
+body.bg-dark .alert-info {
+    background-color: #17a2b8;
+    color: #fff;
+}
+body.bg-dark .alert-warning {
+    background-color: #ffc107;
+    color: #212529; /* Uyarı metnini okunur tutmak için */
+}
+body.bg-dark .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+/* --- Karanlık Mod için Eklenecek CSS SONU --- */
+
+.alert {
+    border-radius: 10px;
+    font-size: 1.09rem;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px 0 #00996612;
+    animation: slideIn 0.45s;
+}
+@keyframes slideIn {
+    0% { opacity: 0; transform: translateY(-30px);}
+    100% { opacity: 1; transform: translateY(0);}
+}
+@media (max-width: 700px) {
+    .add-animal-card { padding: 18px 8px 18px 8px; }
+    .add-animal-title { font-size: 1.3rem; }
+}
+
+.btn-animal {
+    background: linear-gradient(90deg, #2196f3 0%, #1976d2 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.13rem;
+    border: none;
+    border-radius: 14px;
+    padding: 0.78rem 0;
+    width: 70%;
+    max-width: 340px;
+    margin: 32px auto 0 auto;
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 18px 0 #1565c029;
+    display: block;
+    transition: all 0.17s cubic-bezier(.4,0,.2,1);
+}
+
+.btn-animal:hover, .btn-animal:focus {
+    background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+    color: #fff;
+    box-shadow: 0 8px 28px 0 #1976d240;
+    transform: translateY(-1px) scale(1.025);
+    outline: none;
+}
+
+.btn-back-home-card {
+    background: #e9f5ff; /* Açık ve ferah bir arka plan */
+    color: #007bff; /* Mavi metin */
+    font-weight: 600;
+    border: 1px solid #c2e0ff; /* İnce, soft kenarlık */
+    border-radius: 14px;
+    font-size: 1rem;
+    padding: 0.78rem 0;
+    width: 100%;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); /* Hafif gölge */
+    outline: none;
+    margin-top: 20px;
+}
+.btn-back-home-card:hover, .btn-back-home-card:focus {
+    background: #d4ecff !important;
+    color: #0056b3 !important;
+    border-color: #a0d8ff !important;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2) !important;
+    transform: translateY(-1px) scale(1.005);
+    text-decoration: none;
+}
+.btn-back-home-card i {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+body.bg-dark .btn-back-home-card {
+    background: #3a3a3a !important;
+    color: #8bbfff !important;
+    border-color: #5c9eff !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+body.bg-dark .btn-back-home-card:hover, body.bg-dark .btn-back-home-card:focus {
+    background: #494949 !important;
+    color: #c0e0ff !important;
+    border-color: #8bbfff !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+
+@media (max-width: 700px) {
+    .settings-card { padding: 18px 8px 18px 8px; }
+    .settings-title { font-size: 1.5rem; }
+    .btn-save-modern { width: 80%; }
+}
