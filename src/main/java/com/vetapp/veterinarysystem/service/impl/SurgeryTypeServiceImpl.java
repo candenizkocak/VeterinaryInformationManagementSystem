@@ -1,3 +1,4 @@
+// src/main/java/com/vetapp/veterinarysystem/service/impl/SurgeryTypeServiceImpl.java
 package com.vetapp.veterinarysystem.service.impl;
 
 import com.vetapp.veterinarysystem.model.SurgeryType;
@@ -19,9 +20,22 @@ public class SurgeryTypeServiceImpl implements SurgeryTypeService {
         return surgeryTypeRepository.findAll();
     }
 
-    @Override // EKLENDİ
+    @Override
     public SurgeryType getSurgeryTypeById(Long id) {
         return surgeryTypeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Surgery Type not found with ID: " + id));
+    }
+
+    @Override
+    public SurgeryType createSurgeryType(SurgeryType surgeryType) {
+        // You can add validation logic here if needed (e.g., check for unique typeName)
+        return surgeryTypeRepository.save(surgeryType);
+    }
+
+    @Override
+    public void deleteSurgeryType(Long id) {
+        // You might want to add checks here if a SurgeryType cannot be deleted
+        // if it's referenced by existing Surgery records.
+        surgeryTypeRepository.deleteById(id);
     }
 }

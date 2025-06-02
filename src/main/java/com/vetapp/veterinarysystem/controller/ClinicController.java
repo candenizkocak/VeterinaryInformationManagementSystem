@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.vetapp.veterinarysystem.model.ItemType;
 import com.vetapp.veterinarysystem.model.Supplier;
+import com.vetapp.veterinarysystem.model.SurgeryType; // Import SurgeryType model
+import com.vetapp.veterinarysystem.service.SurgeryTypeService; // Import SurgeryTypeService
 
 @Controller
 @RequestMapping("/clinic")
@@ -37,6 +39,7 @@ public class ClinicController {
     private final ItemTypeService itemTypeService;
     private final SupplierService supplierService;
     private final UserRepository userRepository; // For finding clinic by user
+    private final SurgeryTypeService surgeryTypeService;
 
     // Helper method to get the logged-in clinic
     private Clinic getCurrentClinic(Principal principal) {
@@ -260,6 +263,42 @@ public class ClinicController {
         }
         return "redirect:/clinic/vaccine-types";
     }
+
+    // --- Surgery Type Management --- // NEW SECTION
+    @GetMapping("/surgery-types")
+    public String manageSurgeryTypes(Model model, Principal principal) {
+        getCurrentClinic(principal); // Auth check: ensure clinic user is logged in
+        model.addAttribute("surgeryTypes", surgeryTypeService.getAllSurgeryTypes());
+        model.addAttribute("newSurgeryType", new SurgeryType()); // For add form
+        return "clinic/surgery_types"; // Points to the new JSP file
+    }
+
+    @PostMapping("/surgery-types/add")
+    public String addSurgeryType(@ModelAttribute SurgeryType surgeryType, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            getCurrentClinic(principal); // Auth check
+            surgeryTypeService.createSurgeryType(surgeryType);
+            redirectAttributes.addFlashAttribute("success", "Surgery type added successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error adding surgery type: " + e.getMessage());
+            e.printStackTrace(); // For debugging
+        }
+        return "redirect:/clinic/surgery-types";
+    }
+
+    @PostMapping("/surgery-types/delete/{id}")
+    public String deleteSurgeryType(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            getCurrentClinic(principal); // Auth check
+            surgeryTypeService.deleteSurgeryType(id);
+            redirectAttributes.addFlashAttribute("success", "Surgery type deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error deleting surgery type: " + e.getMessage());
+            e.printStackTrace(); // For debugging
+        }
+        return "redirect:/clinic/surgery-types";
+    }
+
 
     // --- Inventory Management (CRUD) ---
     @GetMapping("/inventory")
