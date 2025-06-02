@@ -38,21 +38,37 @@
                         </div>
                     </div>
                 </c:when>
-
                 <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
-                    <jsp.include page="client/navbar.jsp"/>
-                    <div class="card bg-info text-white mb-4">
-                        <div class="card-header">Client Panel</div>
-                        <div class="card-body text-center">
-                            <p class="mb-4">Manage your animals, view appointments, and update account settings.</p>
-
-                            <a href="/api/clients/animals" class="btn btn-light me-2">🐾 My Animals</a>
-                            <a href="/api/clients/account-settings" class="btn btn-light me-2">⚙️ Account Settings</a>
-                            <a href="/api/clients/appointments" class="btn btn-light me-2">📅 My Appointments</a>
-                            <a href="/api/clients/add-animal" class="btn btn-light me-2">🐶 Add Animal</a>
+                     <div class="card shadow-lg rounded-4 border-0 mb-5" style="background: linear-gradient(135deg,#cce7ff 70%,#e6f7ff 100%);">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-3">
+                            <h3 class="fw-bold text-primary text-center mb-0">
+                                <span style="font-size:2em;">👤</span> Client Panel
+                            </h3>
+                        </div>
+                        <div class="card-body text-center py-4">
+                            <p class="lead text-dark mb-4">Welcome! Easily manage your pets and appointments.</p>
+                            <div class="d-flex flex-wrap justify-content-center gap-3 mb-2">
+                                <a href="/api/clients/animals" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
+                                    <span style="font-size:2.2em;">🐾</span>
+                                    <span class="fw-semibold mt-2">My Animals</span>
+                                </a>
+                                <a href="/api/clients/account-settings" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
+                                    <span style="font-size:2.2em;">⚙️</span>
+                                    <span class="fw-semibold mt-2">Account Settings</span>
+                                </a>
+                                <a href="/api/clients/appointments" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
+                                    <span style="font-size:2.2em;">📅</span>
+                                    <span class="fw-semibold mt-2">My Appointments</span>
+                                </a>
+                                <a href="/api/clients/add-animal" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
+                                    <span style="font-size:2.2em;">🐶</span>
+                                    <span class="fw-semibold mt-2">Add Animal</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </c:when>
+
 
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                     <div class="alert alert-success text-center">

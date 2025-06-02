@@ -1,3 +1,4 @@
+// src/main/java/com/vetapp/veterinarysystem/service/impl/AppointmentServiceImpl.java
 package com.vetapp.veterinarysystem.service.impl;
 
 import com.vetapp.veterinarysystem.model.Appointment;
@@ -10,6 +11,7 @@ import com.vetapp.veterinarysystem.service.AppointmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Import ekleyin
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -54,8 +56,8 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new IllegalArgumentException("Clinic ID is missing");
         if (appointment.getVeterinary() == null || appointment.getVeterinary().getVeterinaryId() == null)
             throw new IllegalArgumentException("Veterinary ID is missing");
-        if (appointment.getPet() == null)
-            throw new IllegalArgumentException("Pet is missing");
+        if (appointment.getPet() == null || appointment.getPet().getPetID() == null) // Pet'in ID'sinin de kontrolü
+            throw new IllegalArgumentException("Pet is missing or Pet ID is null");
 
         Clinic clinic = clinicRepository.findById(appointment.getClinic().getClinicId())
                 .orElseThrow(() -> new IllegalArgumentException("Clinic not found"));
@@ -67,6 +69,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         checkWithinWorkingHours(appointment);
 
+
+        List<Appointment> existingAppointments = appointmentRepository.findByVeterinaryVeterinaryIdAndAppointmentDateBetween(
+                veterinary.getVeterinaryId(),
+                appointment.getAppointmentDate().withSecond(0).withNano(0), // Saniye ve nanosaniyeyi sıfırla
+                appointment.getAppointmentDate().withSecond(0).withNano(0).plusMinutes(29) // 30 dakikalık slot için 29 dakika ekle
+        );
+
+        if (!existingAppointments.isEmpty()) {
+            throw new IllegalArgumentException("Selected time slot is already taken by this veterinary.");
+        }
+
+
         return appointmentRepository.save(appointment);
     }
 
@@ -77,12 +91,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Clinic fullClinic = clinicRepository.findById(appointment.getClinic().getClinicId())
                 .orElseThrow(() -> new IllegalArgumentException("Clinic not found"));
+        Veterinary fullVeterinary = veterinaryRepository.findById(appointment.getVeterinary().getVeterinaryId())
+                .orElseThrow(() -> new IllegalArgumentException("Veterinary not found"));
+
 
         existing.setAppointmentDate(appointment.getAppointmentDate());
         existing.setStatus(appointment.getStatus());
         existing.setPet(appointment.getPet());
         existing.setClinic(fullClinic);
-        existing.setVeterinary(appointment.getVeterinary());
+        existing.setVeterinary(fullVeterinary);
 
         checkWithinWorkingHours(existing);
         return appointmentRepository.save(existing);
@@ -95,12 +112,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment getAppointmentById(Long id) {
+
         return appointmentRepository.findById(id).orElse(null);
     }
 
     @Override
     public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAllWithDetails();
+        return appointmentRepository.findAllWithDetails(); // Detayları ile birlikte getir
     }
 
     private void checkWithinWorkingHours(Appointment appointment) {
@@ -109,11 +127,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         LocalTime closing = appointment.getClinic().getClosingHour();
 
         if (opening == null || closing == null) {
-            throw new IllegalArgumentException("Clinic working hours are not defined.");
+            throw new IllegalArgumentException("Clinic working hours are not defined for clinic ID: " + appointment.getClinic().getClinicId());
         }
 
-        if (appointmentTime.isBefore(opening) || appointmentTime.isAfter(closing)) {
-            throw new IllegalArgumentException("Appointment time is outside clinic working hours.");
+
+        if (appointmentTime.isBefore(opening) || appointmentTime.plusMinutes(29).isAfter(closing)) {
+            throw new IllegalArgumentException("Appointment time (" + appointmentTime + ") is outside clinic working hours (" + opening + "-" + closing + ").");
         }
     }
 
@@ -127,11 +146,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         LocalTime opening = clinic.getOpeningHour();
         LocalTime closing = clinic.getClosingHour();
 
+        if (opening == null || closing == null) {
+            throw new IllegalArgumentException("Clinic working hours are not defined.");
+        }
+
         List<Appointment> existingAppointments = appointmentRepository
                 .findByVeterinaryVeterinaryIdAndAppointmentDateBetween(
                         veterinaryId,
-                        date.atTime(opening),
-                        date.atTime(closing)
+                        date.atStartOfDay(), // Günün başlangıcı
+                        date.atTime(LocalTime.MAX) // Günün sonu
                 );
 
         Set<LocalTime> takenTimes = existingAppointments.stream()
@@ -141,7 +164,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<LocalDateTime> availableSlots = new ArrayList<>();
         LocalTime currentTime = opening;
 
-        while (currentTime.plusMinutes(30).compareTo(closing) <= 0) {
+        // 30 dakikalık aralıklarla slotları kontrol et
+        while (currentTime.plusMinutes(30).compareTo(closing) <= 0) { // Son randevu bitiş saati kapanış saatini geçmemeli
             if (!takenTimes.contains(currentTime)) {
                 availableSlots.add(date.atTime(currentTime));
             }
@@ -149,5 +173,23 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         return availableSlots;
+    }
+
+    @Override
+    @Transactional
+    public void cancelAppointment(Long appointmentId, Long clientId) throws IllegalArgumentException {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found with ID: " + appointmentId));
+
+        if (!appointment.getPet().getClient().getClientId().equals(clientId)) {
+            throw new IllegalArgumentException("You are not authorized to cancel this appointment.");
+        }
+
+        if (!"Planned".equalsIgnoreCase(appointment.getStatus())) {
+            throw new IllegalArgumentException("Only 'Planned' appointments can be cancelled. Current status: " + appointment.getStatus());
+        }
+
+        appointment.setStatus("Cancelled");
+        appointmentRepository.save(appointment);
     }
 }

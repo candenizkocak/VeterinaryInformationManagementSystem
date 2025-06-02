@@ -1,8 +1,10 @@
+// src/main/java/com/vetapp/veterinarysystem/controller/ClientController.java
 package com.vetapp.veterinarysystem.controller;
 
 import com.vetapp.veterinarysystem.dto.*;
 import com.vetapp.veterinarysystem.model.*;
 import com.vetapp.veterinarysystem.repository.ClientRepository;
+import com.vetapp.veterinarysystem.repository.ClinicVeterinaryRepository;
 import com.vetapp.veterinarysystem.repository.UserRepository;
 import com.vetapp.veterinarysystem.service.*;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime; // LocalDateTime ekleyin
+import java.time.LocalTime; // LocalTime ekleyin
+import java.time.format.DateTimeFormatter; // DateTimeFormatter ekleyin
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors; // Collectors ekleyin
 
 @Controller
 @RequestMapping("/api/clients")
@@ -35,9 +42,18 @@ public class ClientController {
     private final AppointmentService appointmentService;
     private final ClinicService clinicService;
     private final VeterinaryService veterinaryService;
+    private final ClinicVeterinaryRepository clinicVeterinaryRepository;
 
 
-
+    // Helper metot: Giriş yapmış client'ı bulur
+    private Client getLoggedInClient(Principal principal) {
+        if (principal == null) {
+            throw new IllegalStateException("User not authenticated.");
+        }
+        String username = principal.getName();
+        return clientRepository.findByUserUsername(username)
+                .orElseThrow(() -> new RuntimeException("Client user not found: " + username + ". Ensure a Client record is linked to this user."));
+    }
 
     @PostMapping
     public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto clientDto) {
@@ -209,4 +225,149 @@ public class ClientController {
     }
 
 
+    // CLIENT RANDEVU YÖNETİMİ
+    @GetMapping("/appointments")
+    public String showClientAppointments(Model model, Principal principal) {
+        try {
+            Client loggedInClient = getLoggedInClient(principal);
+            List<Pet> pets = petService.getPetsByClient(loggedInClient); // Client'a ait tüm petleri al
+
+            // Bu pet'lere ait tüm randevuları topla
+            List<Appointment> clientAppointments = pets.stream()
+                    .flatMap(pet -> appointmentService.getAllAppointments().stream() // Tüm randevuları çekip filtrele
+                            .filter(appt -> appt.getPet() != null && appt.getPet().getPetID().equals(pet.getPetID())))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("appointments", convertToDtoList(clientAppointments));
+            return "client/appointments";
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", "Error loading appointments: " + e.getMessage());
+            return "error/custom_error"; // Veya daha uygun bir hata sayfası
+        }
+    }
+
+    @GetMapping("/appointments/book")
+    public String showBookAppointmentForm(Model model, Principal principal) {
+        Client loggedInClient = getLoggedInClient(principal);
+
+        model.addAttribute("pets", petService.getPetsByClient(loggedInClient));
+        model.addAttribute("clinics", clinicService.getAllClinics());
+        // Veterinaries will be loaded dynamically via AJAX based on selected clinic
+        model.addAttribute("today", LocalDate.now()); // Set today's date for minimum date in date picker
+
+        return "client/book_appointment";
+    }
+
+    @PostMapping("/appointments/book")
+    public String bookAppointment(@RequestParam Integer petId,
+                                  @RequestParam Long clinicId,
+                                  @RequestParam Long veterinaryId,
+                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate appointmentDate,
+                                  @RequestParam String appointmentTime, // HH:mm formatında gelecek
+                                  @RequestParam(required = false) String notes,
+                                  Principal principal,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            Client loggedInClient = getLoggedInClient(principal);
+
+            // Gelen petId'nin gerçekten bu client'a ait olup olmadığını kontrol et
+            Pet selectedPet = petService.getPetById(petId);
+            if (selectedPet == null || !selectedPet.getClient().getClientId().equals(loggedInClient.getClientId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Selected pet is not valid or does not belong to you.");
+                return "redirect:/api/clients/appointments/book";
+            }
+
+            Clinic selectedClinic = clinicService.getClinicById(clinicId);
+            Veterinary selectedVeterinary = veterinaryService.getVeterinaryEntityById(veterinaryId);
+
+            // Tarih ve saati birleştir
+            LocalDateTime fullAppointmentDateTime = LocalDateTime.of(appointmentDate, LocalTime.parse(appointmentTime));
+
+            Appointment newAppointment = new Appointment();
+            newAppointment.setPet(selectedPet);
+            newAppointment.setClinic(selectedClinic);
+            newAppointment.setVeterinary(selectedVeterinary);
+            newAppointment.setAppointmentDate(fullAppointmentDateTime);
+            newAppointment.setStatus("Planned"); // Müşteri tarafından oluşturulan randevular "Planned" statüsünde başlar
+
+            appointmentService.createAppointment(newAppointment);
+            redirectAttributes.addFlashAttribute("successMessage", "Appointment booked successfully!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error booking appointment: " + e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred: " + e.getMessage());
+        }
+        return "redirect:/api/clients/appointments";
+    }
+
+    // Randevu iptali endpoint'i
+    @PostMapping("/appointments/cancel/{id}")
+    public String cancelAppointment(@PathVariable("id") Long appointmentId, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Client loggedInClient = getLoggedInClient(principal);
+            appointmentService.cancelAppointment(appointmentId, loggedInClient.getClientId());
+            redirectAttributes.addFlashAttribute("successMessage", "Appointment cancelled successfully!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error cancelling appointment: " + e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred during cancellation: " + e.getMessage());
+            e.printStackTrace(); // Hata ayıklama için konsola yazdırın
+        }
+        return "redirect:/api/clients/appointments";
+    }
+
+
+    // AJAX endpoint for fetching veterinaries by clinic (used in booking form)
+    @GetMapping(value = "/veterinaries-by-clinic-and-date", produces = "application/json")
+    @ResponseBody
+    public List<VeterinaryDto> getVeterinariesByClinicAndDate(@RequestParam Long clinicId,
+                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        // Bu metod, klinik ve tarihe göre müsait veterinerleri döndürebilir.
+        // Ancak AppointmentService.getAvailableTimeSlots zaten veteriner ID'si bekliyor.
+        // Basitlik için şimdilik sadece kliniğe atanmış tüm veterinerleri döndürelim.
+        // Gerçek bir senaryoda, müsaitlik kontrolü burada daha karmaşık olabilir.
+        List<Veterinary> vets = clinicVeterinaryRepository.findVeterinariesByClinicId(clinicId);
+        return vets.stream().map(v -> new VeterinaryDto(
+                v.getVeterinaryId(), v.getFirstName(), v.getLastName(), v.getSpecialization(),
+                v.getUser() != null ? v.getUser().getUsername() : "N/A"
+        )).collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "/appointments/available-slots", produces = "application/json")
+    @ResponseBody
+    public List<String> getAvailableSlotsForClient(@RequestParam Long clinicId,
+                                                   @RequestParam Long veterinaryId,
+                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            List<LocalDateTime> availableSlots = appointmentService.getAvailableTimeSlots(clinicId, veterinaryId, date);
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            return availableSlots.stream()
+                    .map(dateTime -> dateTime.format(timeFormatter))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println("Error fetching available slots for client: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+
+
+    private List<AppointmentDTO> convertToDtoList(List<Appointment> appointmentList) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        return appointmentList.stream().map(a -> {
+            AppointmentDTO dto = new AppointmentDTO();
+            dto.setAppointmentId(a.getAppointmentId());
+            if (a.getAppointmentDate() != null) {
+                dto.setAppointmentDate(a.getAppointmentDate().format(formatter));
+            }
+            dto.setStatus(a.getStatus());
+            dto.setPetName(a.getPet() != null ? a.getPet().getName() : "N/A");
+            dto.setClientName(a.getPet() != null && a.getPet().getClient() != null ?
+                    a.getPet().getClient().getFirstName() + " " + a.getPet().getClient().getLastName() : "N/A");
+            dto.setClinicName(a.getClinic() != null ? a.getClinic().getClinicName() : "N/A");
+            dto.setVeterinaryName(a.getVeterinary() != null ?
+                    a.getVeterinary().getFirstName() + " " + a.getVeterinary().getLastName() : "N/A"); // Bu satır düzeltildi
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }

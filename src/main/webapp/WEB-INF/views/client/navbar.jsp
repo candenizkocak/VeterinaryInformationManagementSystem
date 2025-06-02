@@ -1,3 +1,4 @@
+<%-- src/main/webapp/WEB-INF/views/navbar.jsp --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -119,10 +120,10 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                    <c:if test="${empty sessionScope.role}">
-                        <li class="nav-item"><a class="nav-link" href="#pets">Pets</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#clinics">Clinics</a></li>
-                    </c:if>
+                <c:if test="${empty sessionScope.role}">
+                    <li class="nav-item"><a class="nav-link" href="#pets">Pets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#clinics">Clinics</a></li>
+                </c:if>
                 <c:choose>
                     <c:when test="${sessionScope.role == 'ROLE_ADMIN'}">
                         <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
@@ -136,6 +137,7 @@
                         <li class="nav-item"><a class="nav-link" href="/api/clients/account-settings">Account Settings</a></li>
                         <li class="nav-item"><a class="nav-link" href="/api/clients/appointments">My Appointments</a></li>
                         <li class="nav-item"><a class="nav-link" href="/api/clients/add-animal">Add Animal</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/api/clients/appointments/book">Book Appointment</a></li>
                     </c:when>
                     <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                         <li class="nav-item"><a class="nav-link" href="/veterinary/appointments">My Appointments</a></li>
@@ -145,8 +147,9 @@
                         <li class="nav-item"><a class="nav-link" href="/clinic/appointments">Appointments</a></li>
                         <li class="nav-item"><a class="nav-link" href="/clinic/clients-and-pets">Clients & Pets</a></li>
                         <li class="nav-item"><a class="nav-link" href="/clinic/vaccine-types">Vaccine Types</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/clinic/item-types">Item Types</a></li>    <%-- NEW LINE --%>
-                        <li class="nav-item"><a class="nav-link" href="/clinic/suppliers">Suppliers</a></li>     <%-- NEW LINE --%>
+                        <li class="nav-item"><a class="nav-link" href="/clinic/surgery-types">Surgery Types</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/clinic/item-types">Item Types</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/clinic/suppliers">Suppliers</a></li>
                         <li class="nav-item"><a class="nav-link" href="/clinic/inventory">Inventory</a></li>
                     </c:when>
                 </c:choose>
@@ -181,34 +184,47 @@
 </nav>
 
 <script>
-    const themeToggleSwitch = document.getElementById('themeToggleSwitch');
-    const body = document.getElementById('pageBody');
-    const navbar = document.getElementById('mainNavbar');
-
-    function applyTheme(theme) {
-        if (theme === 'dark') {
-            body.classList.add('bg-dark', 'text-white');
-            body.classList.remove('bg-light', 'text-dark');
-            navbar.classList.add('navbar-dark', 'bg-dark');
-            navbar.classList.remove('navbar-light', 'bg-light');
-            themeToggleSwitch.checked = true;
-        } else {
-            body.classList.add('bg-light', 'text-dark');
-            body.classList.remove('bg-dark', 'text-white');
-            navbar.classList.add('navbar-light', 'bg-light');
-            navbar.classList.remove('navbar-dark', 'bg-dark');
-            themeToggleSwitch.checked = false;
-        }
-        localStorage.setItem('theme', theme);
-    }
-
+    // Bu script bloğu, DOM tamamen yüklendikten sonra çalışır.
     document.addEventListener("DOMContentLoaded", () => {
+        const themeToggleSwitch = document.getElementById('themeToggleSwitch');
+        // Elemanları DOMContentLoaded içinde buluyoruz
+        const body = document.getElementById('pageBody');
+        const navbar = document.getElementById('mainNavbar');
+        const sliderBefore = document.querySelector('.slider:before');
+
+        function applyTheme(theme) {
+            if (body) { // body null değilse işlem yap
+                if (theme === 'dark') {
+                    body.classList.add('bg-dark', 'text-white');
+                    body.classList.remove('bg-light', 'text-dark');
+                    if (navbar) {
+                        navbar.classList.add('navbar-dark', 'bg-dark');
+                        navbar.classList.remove('navbar-light', 'bg-light');
+                    }
+                    if (themeToggleSwitch) themeToggleSwitch.checked = true;
+                    if (sliderBefore) sliderBefore.style.backgroundImage = "url('<%= request.getContextPath() %>/img/moon.gif')";
+                } else {
+                    body.classList.add('bg-light', 'text-dark');
+                    body.classList.remove('bg-dark', 'text-white');
+                    if (navbar) {
+                        navbar.classList.add('navbar-light', 'bg-light');
+                        navbar.classList.remove('navbar-dark', 'bg-dark');
+                    }
+                    if (themeToggleSwitch) themeToggleSwitch.checked = false;
+                    if (sliderBefore) sliderBefore.style.backgroundImage = "url('<%= request.getContextPath() %>/img/sun.gif')";
+                }
+                localStorage.setItem('theme', theme);
+            }
+        }
+
         const savedTheme = localStorage.getItem("theme") || "light";
         applyTheme(savedTheme);
 
-        themeToggleSwitch.addEventListener("change", () => {
-            const newTheme = themeToggleSwitch.checked ? "dark" : "light";
-            applyTheme(newTheme);
-        });
+        if (themeToggleSwitch) { // themeToggleSwitch'in varlığını kontrol et
+            themeToggleSwitch.addEventListener("change", () => {
+                const newTheme = themeToggleSwitch.checked ? "dark" : "light";
+                applyTheme(newTheme);
+            });
+        }
     });
 </script>
