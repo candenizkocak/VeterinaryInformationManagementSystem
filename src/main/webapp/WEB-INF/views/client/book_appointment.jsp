@@ -99,8 +99,9 @@
 
     </style>
 </head>
+<jsp:include page="navbar.jsp"/>
 <body id="pageBody">
-<jsp:include page="../navbar.jsp"/>
+
 
 <div class="appt-card">
     <div class="appt-title"><i class="bi bi-calendar-plus"></i> Book New Appointment</div>

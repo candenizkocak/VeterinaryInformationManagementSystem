@@ -17,7 +17,17 @@
 </head>
 <body class="bg-dark text-white">
 
-<jsp:include page="navbar.jsp"/>
+<c:choose>
+    <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
+        <%-- Client rolündeki kullanıcılar için client klasöründeki navbar'ı dahil et --%>
+        <jsp:include page="client/navbar.jsp"/>
+    </c:when>
+    <c:otherwise>
+        <%-- Diğer roller (Admin, Veterinary, Clinic) ve giriş yapmamış kullanıcılar için varsayılan navbar'ı dahil et --%>
+        <jsp:include page="navbar.jsp"/>
+    </c:otherwise>
+</c:choose>
+<%-- SON: DEĞİŞTİRİLMİŞ KOD --%>
 
 <div class="container mt-5">
 

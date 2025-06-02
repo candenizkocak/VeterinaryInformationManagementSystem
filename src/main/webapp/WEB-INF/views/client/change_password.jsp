@@ -58,7 +58,7 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body id="pageBody" class="bg-light">
 <jsp:include page="navbar.jsp"/>
 <div class="pw-card">
     <div class="pw-title"><i class="bi bi-shield-lock"></i> Change Password</div>
