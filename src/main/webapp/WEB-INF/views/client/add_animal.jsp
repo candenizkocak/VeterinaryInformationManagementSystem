@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+
         body {
             background: #f7faff;
         }
@@ -33,20 +34,6 @@
             font-size: 1.09rem;
             padding: 11px 12px;
         }
-        .btn-animal {
-            background: #157afe;
-            border: none;
-            font-size: 1.1rem;
-            padding: 13px;
-            border-radius: 10px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
-        .btn-animal:hover {
-            background: #1066ee;
-        }
         .alert {
             border-radius: 10px;
             font-size: 1.09rem;
@@ -62,13 +49,40 @@
             .add-animal-card { padding: 18px 8px 18px 8px; }
             .add-animal-title { font-size: 1.3rem; }
         }
+
+        .btn-animal {
+            background: linear-gradient(90deg, #2196f3 0%, #1976d2 100%);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.13rem;
+            border: none;
+            border-radius: 14px;
+            padding: 0.78rem 0;
+            width: 70%;
+            max-width: 340px;
+            margin: 32px auto 0 auto;
+            letter-spacing: 0.3px;
+            box-shadow: 0 3px 18px 0 #1565c029;
+            display: block;
+            transition: all 0.17s cubic-bezier(.4,0,.2,1);
+        }
+
+        .btn-animal:hover, .btn-animal:focus {
+            background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+            color: #fff;
+            box-shadow: 0 8px 28px 0 #1976d240;
+            transform: translateY(-1px) scale(1.025);
+            outline: none;
+        }
+
+
     </style>
 </head>
 <body>
 <jsp:include page="navbar.jsp"/>
 <div class="add-animal-card">
     <div class="add-animal-title">
-        <i class="bi bi-emoji-smile"></i> Add a New Animal
+        <i class="bi bi-emoji-paw"></i> Add a New Animal
     </div>
 
     <c:if test="${success}">
@@ -119,8 +133,11 @@
                 </c:forEach>
             </select>
         </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn-animal">Add Animal</button>
+        </div>
 
-        <button type="submit" class="btn btn-animal w-100">Add Animal</button>
+
     </form>
 </div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />

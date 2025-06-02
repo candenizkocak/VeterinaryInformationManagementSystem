@@ -46,6 +46,57 @@
             background-color: #1e1e1e;
             color: #fff;
         }
+        .btn-main-appt {
+            background: linear-gradient(90deg, #36b0ff 0%, #1170e6 100%);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 14px;
+            padding: 0.78rem 0;
+            width: 100%;
+            max-width: 340px;
+            margin: 20px auto 0 auto;
+            letter-spacing: 0.3px;
+            box-shadow: 0 3px 18px 0 #1170e61a;
+            display: block;
+            transition: all 0.17s cubic-bezier(.4,0,.2,1);
+        }
+        .btn-main-appt:hover, .btn-main-appt:focus {
+            background: linear-gradient(90deg, #1788d0 0%, #0062be 100%);
+            color: #fff;
+            box-shadow: 0 8px 28px 0 #1170e631;
+            transform: translateY(-1px) scale(1.027);
+            outline: none;
+        }
+
+        .btn-secondary-appt {
+            background: #fff !important;
+            color: #1170e6 !important;
+            font-weight: 600;
+            border: 2px solid #36b0ff !important;
+            border-radius: 14px;
+            font-size: 1rem;
+            padding: 0.78rem 0;
+            width: 100%;
+            max-width: 340px;
+            margin: 15px auto 0 auto;
+            box-shadow: 0 2px 8px 0 #1170e612;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.17s cubic-bezier(.4,0,.2,1);
+            outline: none;
+        }
+        .btn-secondary-appt:hover, .btn-secondary-appt:focus {
+            background: #e3f2fd !important;
+            color: #1976d2 !important;
+            border-color: #1976d2 !important;
+            box-shadow: 0 6px 18px 0 #36b0ff2c;
+            text-decoration: none;
+        }
+
+
     </style>
 </head>
 <body id="pageBody">
@@ -105,8 +156,16 @@
             <textarea name="notes" id="notes" class="form-control" rows="2"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-appt w-100">Book Appointment</button>
-        <a href="${pageContext.request.contextPath}/api/clients/appointments" class="btn btn-secondary mt-2 w-100">Back to Appointments</a>
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <button type="submit" class="btn-main-appt">
+                <span style="font-size:1.3em; margin-right: 7px;">📅</span> Book Appointment
+            </button>
+            <a href="${pageContext.request.contextPath}/api/clients/appointments" class="btn-secondary-appt">
+                Back to Appointments
+            </a>
+        </div>
+
+
     </form>
 </div>
 

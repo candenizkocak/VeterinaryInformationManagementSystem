@@ -72,6 +72,34 @@
             .settings-card { padding: 18px 8px 18px 8px; }
             .settings-title { font-size: 1.5rem; }
         }
+
+        .btn-save-modern {
+            background: linear-gradient(90deg, #64b5f6 0%, #1976d2 100%);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.08rem;
+            letter-spacing: 0.3px;
+            border: none;
+            border-radius: 15px;
+            padding: 0.7rem 0;
+            margin-top: 30px;
+            box-shadow: 0 4px 18px 0 #1565c022;
+            transition: all 0.18s cubic-bezier(.4,0,.2,1);
+            width: 60%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: pointer;
+        }
+        .btn-save-modern:hover, .btn-save-modern:focus {
+            background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+            color: #e3f2fd;
+            box-shadow: 0 6px 28px 0 #1976d23d;
+            transform: translateY(-2px) scale(1.025);
+            outline: none;
+        }
+
+
     </style>
 </head>
 <body>
@@ -100,7 +128,9 @@
             <label class="form-label">Address:</label>
             <input type="text" name="address" value="${accountSettings.address}" class="form-control" maxlength="120" />
         </div>
-        <button type="submit" class="btn btn-save w-100 mb-1">Save Changes</button>
+        <button type="submit" class="btn-save-modern">Save Changes</button>
+
+
     </form>
 
     <div class="divider"></div>
