@@ -1,400 +1,83 @@
-body.bg-dark table.dataTable {
-    background-color: #1e1e1e !important;
-    color: white;
-}
-
-body.bg-dark table.dataTable td,
-body.bg-dark table.dataTable th {
-    background-color: #1e1e1e !important;
-    color: white !important;
-    border-color: #444 !important;
-}
-
-body.bg-dark table.dataTable thead {
-    background-color: #2b2b2b !important;
-}
-
-body.bg-dark table.dataTable thead th {
-    color: white !important;
-}
-
-body.bg-dark table.dataTable.stripe tbody tr.odd {
-    background-color: #2b2b2b !important;
-}
-
-body.bg-dark table.dataTable.stripe tbody tr.even {
-    background-color: #1e1e1e !important;
-}
-
-/* DataTables search input ve length select için tema */
-body.bg-dark .dataTables_wrapper .dataTables_filter input,
-body.bg-dark .dataTables_wrapper .dataTables_length select {
-    background-color: #2b2b2b !important;
-    color: white !important;
-    border: 1px solid #555 !important;
-}
-
-body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button {
-    background-color: #2b2b2b !important;
-    color: white !important;
-    border: 1px solid #444 !important;
-}
-
-body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background-color: #444 !important;
-    color: white !important;
-}
-
-body.bg-dark .paginate_button.current,
-body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button:active {
-    background-color: #0d6efd !important;
-    color: white !important;
-    border: none !important;
-}
-
-body.bg-dark .paginate_button .page-link {
-    background-color: #2b2b2b !important;
-    color: white !important;
-    border: 1px solid #444 !important;
-}
-
-body.bg-dark .paginate_button .page-link:hover {
-    background-color: #444 !important;
-    color: white !important;
-}
-
-body.bg-dark .paginate_button.active .page-link {
-    background-color: #0d6efd !important;
-    border-color: #0d6efd !important;
-    color: white !important;
-}
-
-body.bg-dark .dataTables_wrapper .dataTables_info {
-    color: #ccc !important;
-}
-
-body.bg-dark label,
-body.bg-dark .form-label,
-body.bg-dark select {
-    color: #fff !important;
-}
-
-body.bg-dark input.form-control,
-body.bg-dark select.form-select,
-body.bg-dark textarea.form-control {
-    background-color: #2b2b2b !important;
-    color: white !important;
-    border: 1px solid #555 !important;
-}
-
-body.bg-dark input.form-control::placeholder,
-body.bg-dark textarea.form-control::placeholder {
-    color: #aaa !important;
-}
-
-body.bg-dark select.form-select option {
-    background-color: #2b2b2b !important;
-    color: #fff !important;
-}
-body.bg-dark .btn-outline-primary {
-    color: #0d6efd !important;
-    border-color: #0d6efd !important;
-}
-
-body.bg-dark .btn-outline-primary:hover {
-    background-color: #0d6efd !important;
-    color: white !important;
-}
-body.bg-dark #breedDescription {
-    color: white;
-}
-
-body.bg-light #breedDescription {
-    color: black;
-}
-
-#petSelectArea {
-    backdrop-filter: blur(6px);
-    border-radius: 12px;
-    padding: 24px;
-    position: relative;
-    max-width: 800px;
-    margin: auto;
-    z-index: 2;
-}
-#petSelectArea #petTypeContainer,
-#petSelectArea #petBreedContainer {
-    position: absolute;
-    top: 0;
-    width: 300px;
-    transition: all 0.6s ease-in-out;
-}
-
-#petSelectArea #petTypeContainer {
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-#petSelectArea #petBreedContainer {
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    visibility: hidden;
-}
-
-#petSelectArea.pets-active #petTypeContainer {
-    transform: translateX(-150%);
-}
-
-#petSelectArea.pets-active #petBreedContainer {
-    transform: translateX(50%);
-    opacity: 1;
-    visibility: visible;
-}
-
-body.bg-light label,
-body.bg-light .form-label {
-    color: #000 !important;
-}
-
-body.bg-light section#pets {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    color: black !important;
-}
-
-#pets {
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-color: rgba(30, 30, 30, 0.49) !important;
-    min-height: 60vh !important;
-}
+body.bg-dark table.dataTable { background-color: #1e1e1e !important; color: white; }
+body.bg-dark table.dataTable td, body.bg-dark table.dataTable th { background-color: #1e1e1e !important; color: white !important; border-color: #444 !important; }
+body.bg-dark table.dataTable thead { background-color: #2b2b2b !important; }
+body.bg-dark table.dataTable thead th { color: white !important; }
+body.bg-dark .dataTables_wrapper .dataTables_filter input, body.bg-dark .dataTables_wrapper .dataTables_length select { background-color: #2b2b2b !important; color: white !important; border: 1px solid #555 !important; }
+body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button { background-color: #2b2b2b !important; color: white !important; border: 1px solid #444 !important; }
+body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background-color: #444 !important; }
+body.bg-dark .paginate_button.current, body.bg-dark .dataTables_wrapper .dataTables_paginate .paginate_button.current { background-color: #0d6efd !important; color: white !important; border: none !important; }
+body.bg-dark .dataTables_wrapper .dataTables_info { color: #ccc !important; }
 
 
-#pets .container {
-    background-color: transparent !important;
-    backdrop-filter: blur(4px);
-    z-index: 1;
-}
-
-
-.fade-bg {
-    opacity: 1 !important;
-    transition: opacity 0.5s ease-in-out;
-}
-
-@keyframes fadebg {
-    from { opacity: 0.2; }
-    to { opacity: 1; }
-}
-
-/* --- Client Modülü İçin Genel Tema Ayarları --- */
-
-/* Genel Arka Plan ve Metin Renkleri */
-body {
-    background: #f6f9fc; /* Açık mod varsayılan arka plan */
-    color: #212529; /* Açık mod varsayılan metin rengi */
-}
-body.bg-dark {
-    background: #1a1a1a !important; /* Koyu mod arka plan */
-    color: #e0e0e0 !important; /* Koyu mod metin rengi */
-}
-
-/* Başlıklar */
-h2.fw-bold.text-primary, h5.text-primary {
-    color: #0d6efd !important; /* Açık mod varsayılanı */
-}
-body.bg-dark h2.fw-bold.text-primary, body.bg-dark h5.text-primary {
-    color: #a7d9ff !important; /* Koyu mod başlık rengi */
-}
-
-/* "Book New Appointment" Butonu (YUMUŞAK, MAT) */
-.btn-success.btn-lg {
-    background: linear-gradient(90deg, #2b8a53 0%, #1c5e37 100%); /* Mat yeşil */
-    border: none;
-    font-weight: 600;
-    border-radius: 8px; /* Köşeler biraz keskinleştirildi */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* Daha az belirgin gölge */
-    transition: all 0.2s ease-in-out;
-}
-.btn-success.btn-lg:hover {
-    background: linear-gradient(90deg, #1c5e37 0%, #2b8a53 100%);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transform: translateY(-1px);
-}
-body.bg-dark .btn-success.btn-lg {
-    background: linear-gradient(90deg, #32995b 0%, #1e5f38 100%) !important; /* Koyu mod için daha mat yeşil */
-    color: #e0e0e0 !important;
-}
-body.bg-dark .btn-success.btn-lg:hover {
-    background: linear-gradient(90deg, #1e5f38 0%, #32995b 100%) !important;
-    color: #fff !important;
-}
-
-/* Kartlar ve Genel Öğeler */
 .card.shadow.rounded-4 {
-    background: #fff;
     border: none;
-    border-radius: 0.75rem; /* Kart köşeleri */
+    border-radius: 0.85rem;
 }
 body.bg-dark .card.shadow.rounded-4 {
-    background: #2b2b2b !important;
-    color: #e0e0e0;
-}
-.card-body {
-    padding: 1.5rem;
-}
-.card.shadow.rounded-4 .card-body {
-    border-radius: 0.75rem;
-    overflow: hidden; /* İçerideki responsive tablonun köşelerini gizlemek için */
-}
-
-/* Tablo Başlığı */
-.table-primary {
-    background-color: #003366 !important; /* Çok koyu mavi */
-    color: #fff;
-}
-body.bg-dark .table-primary {
-    background-color: #1a2a40 !important; /* Koyu mod için çok koyu mavi-gri */
-}
-.table-primary th {
-    color: #fff !important;
-    border-bottom: 2px solid rgba(255,255,255,0.2);
-    border-top-left-radius: 0.75rem; /* Kartın üst köşeleriyle aynı */
-    border-top-right-radius: 0.75rem;
-}
-/* DataTables thead'ini hedef alarak tüm köşeleri yuvarla */
-#clientAppointmentsTable thead.table-primary {
-    border-top-left-radius: 0.75rem;
-    border-top-right-radius: 0.75rem;
-}
-
-
-/* Tablo İçeriği */
-.table-hover tbody tr:hover {
-    background-color: rgba(0,0,0,0.03); /* Hover rengi daha da yumuşatıldı */
-}
-body.bg-dark .table-hover tbody tr:hover {
-    background-color: rgba(255,255,255,0.06) !important; /* Koyu modda hover rengi */
-}
-.table-bordered th, .table-bordered td {
-    border-color: #dee2e6;
-}
-body.bg-dark .table-bordered th, body.bg-dark .table-bordered td {
-    border-color: #495057 !important;
-}
-body.bg-dark .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #343a40 !important;
-}
-body.bg-dark .table-striped tbody tr:nth-of-type(even) {
     background-color: #2b2b2b !important;
 }
-body.bg-dark .table th, body.bg-dark .table td {
+.card-body {
+    padding: 1rem 1.5rem;
+}
+
+.table-primary {
+    background-color: #e9f3ff !important;
+    color: #032a56;
+}
+body.bg-dark .table-primary {
+    background-color: #1a2a40 !important;
     color: #e0e0e0;
 }
-.table-responsive {
-    overflow: visible; /* Artık card-body overflow: hidden yönetiyor, bu visible kalabilir */
+.table > thead {
+    vertical-align: middle;
 }
 
-/* Rozetler (Status Badges) */
-.badge {
-    font-weight: 600;
-    padding: 0.5em 0.8em;
-    border-radius: 50rem;
-    font-size: 0.85em;
+.btn-outline-warning.btn-sm {
+    font-weight: 500;
+    border-radius: 50rem; /* hap şeklinde */
+    padding: 0.3rem 0.8rem;
+    transition: all 0.2s ease-in-out;
 }
-/* Planned (Turuncu/Sarı) */
-.badge.bg-warning {
-    background-color: #d89e00 !important; /* Mat turuncu */
+.btn-outline-warning.btn-sm:hover {
+    color: #000;
+    transform: scale(1.05);
+}
+
+.badge.bg-info.text-dark {
+    font-weight: 500;
+}
+body.bg-dark .badge.bg-info.text-dark {
+    background-color: #39a2db !important;
     color: #fff !important;
 }
-body.bg-dark .badge.bg-warning {
-    background-color: #a67c00 !important; /* Koyu mod için daha koyu mat */
-    color: #fff !important;
+
+.badge.bg-light.text-secondary {
+    border: 1px solid #e0e0e0;
 }
-/* Completed (Yeşil) */
-.badge.bg-success {
-    background-color: #1b7a42 !important; /* Mat yeşil */
-    color: #fff !important;
-}
-body.bg-dark .badge.bg-success {
-    background-color: #12542c !important; /* Koyu mod için daha da mat */
-    color: #fff !important;
-}
-/* Cancelled (Kırmızı) */
-.badge.bg-danger {
-    background-color: #9c2531 !important; /* Mat kırmızı */
-    color: #fff !important;
-}
-body.bg-dark .badge.bg-danger {
-    background-color: #6a1a21 !important; /* Koyu mod için daha da mat */
-    color: #fff !important;
-}
-/* Diğer Durumlar (Gri) */
-.badge.bg-secondary {
-    background-color: #6c757d !important;
-    color: #fff !important;
-}
-body.bg-dark .badge.bg-secondary {
+body.bg-dark .badge.bg-light.text-secondary {
     background-color: #495057 !important;
-    color: #e0e0e0 !important;
-}
-/* Date & Time Badge (Açık/Koyu uyumlu) */
-.badge.bg-light {
-    background-color: #e9ecef !important;
-    color: #212529 !important;
-}
-body.bg-dark .badge.bg-light {
-    background-color: #343a40 !important;
-    color: #e0e0e0 !important;
+    color: #adb5bd !important;
+    border: 1px solid #5a6268;
 }
 
-/* Cancel Butonu */
+
 .btn-cancel-sm {
-    background-color: transparent; /* Arka planı şeffaf */
-    color: #dc3545; /* Kırmızı metin */
-    border: 1px solid #dc3545; /* İnce kırmızı kenarlık */
-    width: 38px;
-    height: 38px;
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    width: 38px; height: 38px;
     padding: 0;
     font-size: 1.15em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px; /* Daha köşeli, modern bir görünüm için */
+    border-radius: 8px;
     transition: all 0.25s ease-in-out;
-    box-shadow: 0 2px 6px rgba(220,53,69,0.2); /* Hafif kırmızı gölge */
+    box-shadow: 0 2px 6px rgba(220,53,69,0.2);
     vertical-align: middle;
 }
 .btn-cancel-sm:hover {
-    background-color: #dc3545 !important; /* Hover'da kırmızı arka plan */
-    color: #fff !important; /* Hover'da beyaz metin */
-    box-shadow: 0 4px 10px rgba(220,53,69,0.3); /* Hover'da gölge artar */
-    transform: translateY(-1px); /* Hafif yukarı kayma */
-}
-/* Koyu mod için iptal butonu */
-body.bg-dark .btn-cancel-sm {
-    background-color: transparent !important;
-    color: #f7556f !important; /* Koyu modda daha parlak kırmızı metin */
-    border-color: #f7556f !important; /* Koyu modda daha parlak kırmızı kenarlık */
-    box-shadow: 0 2px 8px rgba(247,85,111,0.3);
-}
-body.bg-dark .btn-cancel-sm:hover {
-    background-color: #f7556f !important;
+    background-color: #dc3545 !important;
     color: #fff !important;
-    box-shadow: 0 4px 12px rgba(247,85,111,0.5);
+    transform: translateY(-1px);
 }
-
-/* İkonun kendisi için ince ayar */
-.btn-cancel-sm i.bi {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1; /* İkonun dikey hizalamasını iyileştirir */
-    /* Opsiyonel: Eğer hala mükemmel değilse, aşağıdaki satırları deneyin */
-    /* position: relative; */
-    /* top: 0.5px; */
-}
-/* DataTables'ın arama kutusu ve satır sayısı seçicisi için padding */
-.dataTables_wrapper .dataTables_filter input { padding-left: 0.75rem; }

@@ -1,0 +1,95 @@
+body {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.review-card {
+    max-width: 600px;
+    margin: auto;
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+body.bg-dark .review-card {
+    background-color: #2b2b2b !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.review-card .card-header {
+    background: linear-gradient(135deg, #0d6efd, #0558c6);
+    color: white;
+    font-weight: 600;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom: 0;
+    padding: 1.25rem 1.5rem;
+}
+.review-card .card-header i {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+}
+
+/* Kart içeriğindeki bilgiler */
+.review-card .card-body p {
+    font-size: 1.05rem;
+    color: #495057;
+}
+body.bg-dark .review-card .card-body p {
+    color: #ced4da;
+}
+.review-card .card-body p strong {
+    color: #212529;
+}
+body.bg-dark .review-card .card-body p strong {
+    color: #e9ecef;
+}
+
+.rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    border: none;
+}
+.rating input {
+    display: none;
+}
+
+.rating > label {
+    cursor: pointer;
+    color: #d3d3d3 !important;
+    font-size: 2.5rem;
+    padding: 0 0.1em;
+    transition: color 0.2s, transform 0.15s;
+}
+
+.rating > label:before {
+    content: '★';
+}
+
+.rating > label:hover,
+.rating > label:hover ~ label,
+.rating > input:checked ~ label {
+    color: #ffc107 !important;
+}
+
+.rating > label:hover {
+    transform: scale(1.1);
+}
+
+
+body.bg-dark .rating > label {
+    color: #495057 !important;
+}
+
+body.bg-dark .rating > label:hover,
+body.bg-dark .rating > label:hover ~ label,
+body.bg-dark .rating > input:checked ~ label {
+    color: #ffc107 !important;
+}
+
+.form-control { border-radius: 0.5rem; }
+body.bg-dark .form-control { background-color: #343a40; border-color: #495057; color: #fff; }
+body.bg-dark .form-control::placeholder { color: #6c757d; }
+
+.btn-primary { font-weight: 500; }
+.btn-secondary { font-weight: 500; }
