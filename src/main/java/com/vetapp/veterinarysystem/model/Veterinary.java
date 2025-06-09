@@ -31,26 +31,26 @@ public class Veterinary {
     @Column(name = "Specialization", length = 100)
     private String specialization;
 
-    // OneToMany: Randevular
+    // OneToMany ilişkileri için @ToString.Exclude ekleyin
     @OneToMany(mappedBy = "veterinary", cascade = CascadeType.ALL)
+    @ToString.Exclude // <--- YENİ EKLENDİ
     private List<Appointment> appointments;
 
-    // OneToMany: Klinik-Veteriner ilişkisi
     @OneToMany(mappedBy = "veterinary", cascade = CascadeType.ALL)
+    @ToString.Exclude // <--- YENİ EKLENDİ
     private List<ClinicVeterinary> clinicVeterinaries;
 
-    // OneToMany: Tıbbi kayıtlar
     @OneToMany(mappedBy = "veterinary", cascade = CascadeType.ALL)
+    @ToString.Exclude // <--- YENİ EKLENDİ
     private List<MedicalRecord> medicalRecords;
 
-    // OneToMany: Yorumlar
     @OneToMany(mappedBy = "veterinary", cascade = CascadeType.ALL)
+    @ToString.Exclude // <--- YENİ EKLENDİ
     private List<Review> reviews;
 
-    // OneToMany: Ameliyatlar
     @OneToMany(mappedBy = "veterinary", cascade = CascadeType.ALL)
+    @ToString.Exclude // <--- YENİ EKLENDİ
     private List<Surgery> surgeries;
-
 }
 
 

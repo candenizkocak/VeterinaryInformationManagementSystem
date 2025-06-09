@@ -28,9 +28,32 @@
         </div>
 
         <div class="col-md-4">
-            <label class="form-label">Location</label>
-            <input type="text" name="location" class="form-control" value="${clinic.location}" required>
+            <label class="form-label">City</label>
+            <select name="cityCode" id="citySelectEdit" class="form-select" required>
+                <option value="">Select City</option>
+            </select>
         </div>
+        <div class="col-md-4">
+            <label class="form-label">District</label>
+            <select name="districtCode" id="districtSelectEdit" class="form-select" required disabled>
+                <option value="">Select District</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Locality</label>
+            <select name="localityCode" id="localitySelectEdit" class="form-select" required disabled>
+                <option value="">Select Locality</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Street Address</label>
+            <input type="text" name="streetAddress" class="form-control" value="${clinic.streetAddress}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Postal Code (Optional)</label>
+            <input type="text" name="postalCode" class="form-control" value="${clinic.postalCode}">
+        </div>
+
 
         <div class="col-md-4">
             <label class="form-label">User (Clinic Owner)</label>
@@ -60,6 +83,135 @@
     </form>
 </div>
 
+<script>
+    $(document).ready(function () {
+        const citySelectEdit = $('#citySelectEdit');
+        const districtSelectEdit = $('#districtSelectEdit');
+        const localitySelectEdit = $('#localitySelectEdit');
+
+
+        const initialCityCode = ${not empty clinic.locality && not empty clinic.locality.district.city ? clinic.locality.district.city.code : 'null'};
+        const initialDistrictCode = ${not empty clinic.locality && not empty clinic.locality.district ? clinic.locality.district.code : 'null'};
+        const initialLocalityCode = ${not empty clinic.locality ? clinic.locality.code : 'null'};
+
+
+        function loadCitiesEdit(callback) {
+            $.ajax({
+                url: '${pageContext.request.contextPath}/api/addresses/cities',
+                type: 'GET',
+                success: function(data) {
+                    citySelectEdit.empty().append('<option value="">Select City</option>');
+                    if (data && data.length > 0) {
+                        data.forEach(function(city) {
+                            citySelectEdit.append($('<option>', {
+                                value: city.code,
+                                text: city.name,
+                                selected: (initialCityCode && city.code == initialCityCode)
+                            }));
+                        });
+                    } else {
+                        citySelectEdit.append('<option value="">No cities found</option>');
+                    }
+                    if (callback) callback();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading cities:", status, error);
+                    citySelectEdit.empty().append('<option value="">Error loading cities</option>');
+                }
+            });
+        }
+
+
+        function loadDistrictsEdit(cityCode, selectedDistrictCode, callback) {
+            districtSelectEdit.empty().append('<option value="">Loading districts...</option>').prop('disabled', true);
+            localitySelectEdit.empty().append('<option value="">Select Locality</option>').prop('disabled', true);
+
+            if (cityCode) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/api/addresses/districts/' + cityCode,
+                    type: 'GET',
+                    success: function(data) {
+                        districtSelectEdit.empty().append('<option value="">Select District</option>');
+                        if (data && data.length > 0) {
+                            data.forEach(function(district) {
+                                districtSelectEdit.append($('<option>', {
+                                    value: district.code,
+                                    text: district.name,
+                                    selected: (selectedDistrictCode && district.code == selectedDistrictCode) // Edit için ön seçim
+                                }));
+                            });
+                            districtSelectEdit.prop('disabled', false);
+                        } else {
+                            districtSelectEdit.append('<option value="">No districts found</option>');
+                        }
+                        if (callback) callback();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading districts:", status, error);
+                        districtSelectEdit.empty().append('<option value="">Error loading districts</option>');
+                    }
+                });
+            } else {
+                districtSelectEdit.empty().append('<option value="">Select City first</option>');
+            }
+        }
+
+        function loadLocalitiesEdit(districtCode, selectedLocalityCode) {
+            localitySelectEdit.empty().append('<option value="">Loading localities...</option>').prop('disabled', true);
+
+            if (districtCode) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/api/addresses/localities/' + districtCode,
+                    type: 'GET',
+                    success: function(data) {
+                        localitySelectEdit.empty().append('<option value="">Select Locality</option>');
+                        if (data && data.length > 0) {
+                            data.forEach(function(locality) {
+                                localitySelectEdit.append($('<option>', {
+                                    value: locality.code,
+                                    text: locality.name,
+                                    selected: (selectedLocalityCode && locality.code == selectedLocalityCode)
+                                }));
+                            });
+                            localitySelectEdit.prop('disabled', false);
+                        } else {
+                            localitySelectEdit.append('<option value="">No localities found</option>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading localities:", status, error);
+                        localitySelectEdit.empty().append('<option value="">Error loading localities</option>');
+                    }
+                });
+            } else {
+                localitySelectEdit.empty().append('<option value="">Select District first</option>');
+            }
+        }
+
+        citySelectEdit.on('change', function() {
+            const selectedCityCode = $(this).val();
+            loadDistrictsEdit(selectedCityCode, null, null);
+        });
+
+        districtSelectEdit.on('change', function() {
+            const selectedDistrictCode = $(this).val();
+            loadLocalitiesEdit(selectedDistrictCode, null);
+        });
+
+        loadCitiesEdit(function() {
+            if (initialCityCode) {
+
+                loadDistrictsEdit(initialCityCode, initialDistrictCode, function() {
+                    if (initialDistrictCode) {
+
+                        loadLocalitiesEdit(initialDistrictCode, initialLocalityCode);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 <!-- THEME TOGGLE -->
 <script>
     const themeToggleSwitch = document.getElementById('themeToggleSwitch');
@@ -86,7 +238,6 @@
             themeToggleSwitch.checked = false;
             document.querySelector('.slider:before')?.style?.setProperty('background-image', "url('<%= request.getContextPath() %>/img/sun.gif')");
         }
-
         localStorage.setItem('theme', theme);
     }
 

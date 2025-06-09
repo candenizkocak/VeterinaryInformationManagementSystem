@@ -41,6 +41,7 @@ public class ClientController {
     private final VeterinaryService veterinaryService;
     private final ClinicVeterinaryRepository clinicVeterinaryRepository;
     private final ReviewService reviewService;
+    private final CityService cityService;
 
     private Client getLoggedInClient(Principal principal) {
         if (principal == null) {
@@ -51,28 +52,28 @@ public class ClientController {
                 .orElseThrow(() -> new RuntimeException("Client user not found: " + username + ". Ensure a Client record is linked to this user."));
     }
 
-    @PostMapping
-    public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto clientDto) {
-        return ResponseEntity.ok(clientService.createClient(clientDto));
-    }
-
     @GetMapping("/register")
     public String showClientRegistrationForm(Model model, Principal principal) {
         if (principal == null) {
             return "redirect:/login";
         }
         model.addAttribute("clientDto", new ClientDto());
+        model.addAttribute("cities", cityService.getAllCities());
         return "client/register_client";
     }
 
     @PostMapping("/register")
-    public String processClientRegistration(@ModelAttribute("clientDto") ClientDto clientDto, Principal principal) {
+    public String processClientRegistration(@ModelAttribute("clientDto") ClientDto clientDto, Principal principal, RedirectAttributes redirectAttributes) {
         if (principal == null) return "redirect:/login";
-
-        clientDto.setUsername(principal.getName());
-        clientService.createClient(clientDto);
-
-        return "redirect:/";
+        try {
+            clientDto.setUsername(principal.getName());
+            clientService.createClient(clientDto);
+            redirectAttributes.addFlashAttribute("successMessage", "Your client profile has been created successfully!");
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating profile: " + e.getMessage());
+            return "redirect:/api/clients/register";
+        }
     }
 
     @GetMapping("/detail/{id}")
@@ -83,11 +84,6 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<List<ClientDto>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
-    }
-
-    @PutMapping("/detail/{id}")
-    public ResponseEntity<ClientDto> updateClient(@PathVariable Long id, @RequestBody ClientDto dto) {
-        return ResponseEntity.ok(clientService.updateClient(id, dto));
     }
 
     @DeleteMapping("/detail/{id}")
@@ -125,26 +121,36 @@ public class ClientController {
     }
 
     @PostMapping("/add-animal")
-    public String addAnimal(@ModelAttribute("pet") Pet pet, Principal principal, Model model) {
+    public String addAnimal(@ModelAttribute("pet") Pet pet, Principal principal, Model model, RedirectAttributes redirectAttributes) {
         if (principal == null) return "redirect:/login";
-        String username = principal.getName();
-        Client client = clientService.getClientByUsername(username);
-        pet.setClient(client);
-        pet.setSpecies(speciesService.getById(pet.getSpecies().getSpeciesID()));
-        pet.setBreed(breedService.getById(pet.getBreed().getBreedID()));
-        pet.setGender(genderService.getById(pet.getGender().getGenderID()));
-        petService.save(pet);
-        model.addAttribute("success", true);
-        model.addAttribute("pet", new Pet());
-        model.addAttribute("speciesList", speciesService.getAllSpecies());
-        model.addAttribute("breedList", breedService.getAllBreeds());
-        model.addAttribute("genderList", genderService.getAllGenders());
-        return "client/add_animal";
+        try {
+            String username = principal.getName();
+            Client client = clientService.getClientByUsername(username);
+            pet.setClient(client);
+            pet.setSpecies(speciesService.getById(pet.getSpecies().getSpeciesID()));
+            pet.setBreed(breedService.getById(pet.getBreed().getBreedID()));
+            pet.setGender(genderService.getById(pet.getGender().getGenderID()));
+            petService.save(pet);
+            redirectAttributes.addFlashAttribute("success", true);
+            return "redirect:/api/clients/my-animals";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error adding animal: " + e.getMessage());
+            model.addAttribute("pet", pet);
+            model.addAttribute("speciesList", speciesService.getAllSpecies());
+            model.addAttribute("breedList", breedService.getAllBreeds());
+            model.addAttribute("genderList", genderService.getAllGenders());
+            return "client/add_animal";
+        }
     }
 
     @PostMapping("/delete-animal/{id}")
-    public String deleteAnimal(@PathVariable("id") int id, Principal principal) {
-        petService.deletePetById(id);
+    public String deleteAnimal(@PathVariable("id") int id, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            petService.deletePetById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Animal deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting animal: " + e.getMessage());
+        }
         return "redirect:/api/clients/my-animals";
     }
 
@@ -155,6 +161,7 @@ public class ClientController {
             String username = principal.getName();
             ClientAccountSettingsDto dto = clientService.getAccountSettings(username);
             model.addAttribute("accountSettings", dto);
+            model.addAttribute("cities", cityService.getAllCities());
             return "client/account_settings";
         } catch (Exception e) {
             model.addAttribute("error", "Account info could not be loaded: " + e.getMessage());
@@ -163,13 +170,17 @@ public class ClientController {
     }
 
     @PostMapping("/account-settings")
-    public String updateAccountSettings(@ModelAttribute("accountSettings") ClientAccountSettingsDto dto, Principal principal, Model model) {
+    public String updateAccountSettings(@ModelAttribute("accountSettings") ClientAccountSettingsDto dto, Principal principal, RedirectAttributes redirectAttributes) {
         if (principal == null) return "redirect:/login";
-        String username = principal.getName();
-        clientService.updateAccountSettings(username, dto);
-        model.addAttribute("accountSettings", dto);
-        model.addAttribute("success", true);
-        return "client/account_settings";
+        try {
+            String username = principal.getName();
+            clientService.updateAccountSettings(username, dto);
+            redirectAttributes.addFlashAttribute("success", true);
+            return "redirect:/api/clients/account-settings";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating account settings: " + e.getMessage());
+            return "redirect:/api/clients/account-settings";
+        }
     }
 
     @GetMapping("/change-password")
@@ -215,11 +226,22 @@ public class ClientController {
     }
 
     @GetMapping("/appointments/book")
-    public String showBookAppointmentForm(Model model, Principal principal) {
+    public String showBookAppointmentForm(@RequestParam(value = "clinicId", required = false) Long preselectedClinicId,
+                                          @RequestParam(value = "veterinaryId", required = false) Long preselectedVeterinaryId,
+                                          Model model, Principal principal) {
         Client loggedInClient = getLoggedInClient(principal);
         model.addAttribute("pets", petService.getPetsByClient(loggedInClient));
-        model.addAttribute("clinics", clinicService.getAllClinics());
+
+        model.addAttribute("clinics", clinicService.getAllClinicsDto());
+
         model.addAttribute("today", LocalDate.now());
+
+        if (preselectedClinicId != null) {
+            model.addAttribute("preselectedClinicId", preselectedClinicId);
+        }
+        if (preselectedVeterinaryId != null) {
+            model.addAttribute("preselectedVeterinaryId", preselectedVeterinaryId);
+        }
         return "client/book_appointment";
     }
 
@@ -298,6 +320,7 @@ public class ClientController {
     @GetMapping(value = "/veterinaries-by-clinic-and-date", produces = "application/json")
     @ResponseBody
     public List<VeterinaryDto> getVeterinariesByClinicAndDate(@RequestParam Long clinicId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
         List<Veterinary> vets = clinicVeterinaryRepository.findVeterinariesByClinicId(clinicId);
         return vets.stream().map(v -> new VeterinaryDto(v.getVeterinaryId(), v.getFirstName(), v.getLastName(), v.getSpecialization(), v.getUser() != null ? v.getUser().getUsername() : "N/A")).collect(Collectors.toList());
     }
@@ -314,6 +337,27 @@ public class ClientController {
         }
     }
 
+    @GetMapping(value = "/clinics/{clinicId}/veterinaries", produces = "application/json")
+    @ResponseBody
+    public List<VeterinaryDto> getVeterinariesForClinic(@PathVariable Long clinicId) {
+        List<Veterinary> vets = clinicVeterinaryRepository.findVeterinariesByClinicId(clinicId);
+        return vets.stream().map(v -> new VeterinaryDto(
+                v.getVeterinaryId(), v.getFirstName(), v.getLastName(), v.getSpecialization(),
+                v.getUser() != null ? v.getUser().getUsername() : "N/A"
+        )).collect(Collectors.toList());
+    }
+
+    @GetMapping("/our-clinics")
+    public String showOurClinics(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("clinics", clinicService.getAllClinicsDto());
+        return "client/our_clinics";
+    }
+
+
     private List<AppointmentDTO> convertToDtoList(List<Appointment> appointmentList) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         return appointmentList.stream().map(a -> {
@@ -326,8 +370,22 @@ public class ClientController {
             dto.setPetName(a.getPet() != null ? a.getPet().getName() : "N/A");
             dto.setClientName(a.getPet() != null && a.getPet().getClient() != null ? a.getPet().getClient().getFirstName() + " " + a.getPet().getClient().getLastName() : "N/A");
             dto.setClinicName(a.getClinic() != null ? a.getClinic().getClinicName() : "N/A");
-            dto.setVeterinaryName(a.getVeterinary() != null ? a.getVeterinary().getFirstName() + " " + a.getVeterinary().getLastName() : "N/A");
+            dto.setVeterinaryName(a.getVeterinary() != null ?
+                    a.getVeterinary().getFirstName() + " " + a.getVeterinary().getLastName() : "N/A");
             return dto;
         }).collect(Collectors.toList());
     }
+    @GetMapping(value = "/clinics", produces = "application/json")
+    @ResponseBody
+    public List<ClinicDto> getClinicsByDistrictCode(@RequestParam("districtCode") Integer districtCode) {
+        return clinicService.getClinicsByDistrictCode(districtCode);
+    }
+
+    @GetMapping(value = "/clinics/all", produces = "application/json")
+    @ResponseBody
+    public List<ClinicDto> getAllClinicsJson() {
+        return clinicService.getAllClinicsDto();
+    }
+
+
 }

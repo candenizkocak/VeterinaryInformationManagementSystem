@@ -24,10 +24,36 @@
             <label class="form-label">Clinic Name</label>
             <input type="text" name="clinicName" class="form-control" required>
         </div>
+        <%-- Eski location alanı yerine yeni adres inputları --%>
         <div class="col-md-4">
-            <label class="form-label">Location</label>
-            <input type="text" name="location" class="form-control" required>
+            <label class="form-label">City</label>
+            <select name="cityCode" id="citySelectCreate" class="form-select" required>
+                <option value="">Select City</option>
+                <%-- Şehirler JavaScript ile yüklenecek --%>
+            </select>
         </div>
+        <div class="col-md-4">
+            <label class="form-label">District</label>
+            <select name="districtCode" id="districtSelectCreate" class="form-select" required disabled>
+                <option value="">Select District</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Locality</label>
+            <select name="localityCode" id="localitySelectCreate" class="form-select" required disabled>
+                <option value="">Select Locality</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Street Address</label>
+            <input type="text" name="streetAddress" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Postal Code (Optional)</label>
+            <input type="text" name="postalCode" class="form-control">
+        </div>
+        <%-- Yeni adres inputları sonu --%>
+
         <div class="col-md-3">
             <label class="form-label">Opening Hour</label>
             <input type="time" name="openingHour" class="form-control" required>
@@ -54,7 +80,7 @@
         <tr>
             <th>ID</th>
             <th>Clinic Name</th>
-            <th>Location</th>
+            <th>Address</th> <%-- Location yerine Address --%>
             <th>Opening Hour</th>
             <th>Closing Hour</th>
             <th>Owner</th>
@@ -66,7 +92,22 @@
             <tr>
                 <td>${clinic.clinicId}</td>
                 <td>${clinic.clinicName}</td>
-                <td>${clinic.location}</td>
+                    <%-- Adres bilgilerini birleştirerek gösteriyoruz --%>
+                <td>
+                        ${clinic.streetAddress}
+                    <c:if test="${not empty clinic.locality}">
+                        , ${clinic.locality.name}
+                    </c:if>
+                    <c:if test="${not empty clinic.locality.district}">
+                        / ${clinic.locality.district.name}
+                    </c:if>
+                    <c:if test="${not empty clinic.locality.district.city}">
+                        / ${clinic.locality.district.city.name}
+                    </c:if>
+                    <c:if test="${not empty clinic.postalCode}">
+                        - ${clinic.postalCode}
+                    </c:if>
+                </td>
                 <td>${clinic.openingHour}</td>
                 <td>${clinic.closingHour}</td>
                 <td>${clinic.user.username}</td>
@@ -93,34 +134,159 @@
                 { orderable: false, targets: -1 }
             ]
         });
+
+        // --- Adres Combo Box'ları İçin JavaScript Mantığı (YENİ) ---
+        const citySelectCreate = $('#citySelectCreate');
+        const districtSelectCreate = $('#districtSelectCreate');
+        const localitySelectCreate = $('#localitySelectCreate');
+
+        // Fonksiyon: Şehirleri Yükle
+        function loadCities(callback) {
+            $.ajax({
+                url: '${pageContext.request.contextPath}/api/addresses/cities',
+                type: 'GET',
+                success: function(data) {
+                    citySelectCreate.empty().append('<option value="">Select City</option>');
+                    if (data && data.length > 0) {
+                        data.forEach(function(city) {
+                            citySelectCreate.append($('<option>', {
+                                value: city.code,
+                                text: city.name
+                            }));
+                        });
+                    } else {
+                        citySelectCreate.append('<option value="">No cities found</option>');
+                    }
+                    if (callback) callback();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading cities:", status, error);
+                    citySelectCreate.empty().append('<option value="">Error loading cities</option>');
+                }
+            });
+        }
+
+        // Fonksiyon: İlçeleri Yükle
+        function loadDistricts(cityCode, selectedDistrictCode, callback) {
+            districtSelectCreate.empty().append('<option value="">Loading districts...</option>').prop('disabled', true);
+            localitySelectCreate.empty().append('<option value="">Select Locality</option>').prop('disabled', true);
+
+            if (cityCode) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/api/addresses/districts/' + cityCode,
+                    type: 'GET',
+                    success: function(data) {
+                        districtSelectCreate.empty().append('<option value="">Select District</option>');
+                        if (data && data.length > 0) {
+                            data.forEach(function(district) {
+                                districtSelectCreate.append($('<option>', {
+                                    value: district.code,
+                                    text: district.name,
+                                    selected: (selectedDistrictCode && district.code == selectedDistrictCode) // Edit için ön seçim
+                                }));
+                            });
+                            districtSelectCreate.prop('disabled', false);
+                        } else {
+                            districtSelectCreate.append('<option value="">No districts found</option>');
+                        }
+                        if (callback) callback();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading districts:", status, error);
+                        districtSelectCreate.empty().append('<option value="">Error loading districts</option>');
+                    }
+                });
+            } else {
+                districtSelectCreate.empty().append('<option value="">Select City first</option>');
+            }
+        }
+
+        // Fonksiyon: Mahalleleri Yükle
+        function loadLocalities(districtCode, selectedLocalityCode) {
+            localitySelectCreate.empty().append('<option value="">Loading localities...</option>').prop('disabled', true);
+
+            if (districtCode) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/api/addresses/localities/' + districtCode,
+                    type: 'GET',
+                    success: function(data) {
+                        localitySelectCreate.empty().append('<option value="">Select Locality</option>');
+                        if (data && data.length > 0) {
+                            data.forEach(function(locality) {
+                                localitySelectCreate.append($('<option>', {
+                                    value: locality.code,
+                                    text: locality.name,
+                                    selected: (selectedLocalityCode && locality.code == selectedLocalityCode) // Edit için ön seçim
+                                }));
+                            });
+                            localitySelectCreate.prop('disabled', false);
+                        } else {
+                            localitySelectCreate.append('<option value="">No localities found</option>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading localities:", status, error);
+                        localitySelectCreate.empty().append('<option value="">Error loading localities</option>');
+                    }
+                });
+            } else {
+                localitySelectCreate.empty().append('<option value="">Select District first</option>');
+            }
+        }
+
+        // Event Listeners
+        citySelectCreate.on('change', function() {
+            const selectedCityCode = $(this).val();
+            loadDistricts(selectedCityCode);
+        });
+
+        districtSelectCreate.on('change', function() {
+            const selectedDistrictCode = $(this).val();
+            loadLocalities(selectedDistrictCode);
+        });
+
+        // Sayfa yüklendiğinde şehirleri otomatik yükle
+        loadCities();
     });
 </script>
 
 <script>
-    const body = document.getElementById("pageBody");
+    const themeToggleSwitch = document.getElementById('themeToggleSwitch');
+    const body = document.getElementById('pageBody');
+    const navbar = document.getElementById('mainNavbar');
 
     function applyTheme(theme) {
-        if (theme === "dark") {
-            body.classList.add("bg-dark", "text-white");
-            body.classList.remove("bg-light", "text-dark");
+        if (theme === 'dark') {
+            body.classList.add('bg-dark', 'text-white');
+            body.classList.remove('bg-light', 'text-dark');
+            if (navbar) {
+                navbar.classList.add('navbar-dark', 'bg-dark');
+                navbar.classList.remove('navbar-light', 'bg-light');
+            }
+            themeToggleSwitch.checked = true;
+            document.querySelector('.slider:before')?.style?.setProperty('background-image', "url('<%= request.getContextPath() %>/img/moon.gif')");
         } else {
-            body.classList.add("bg-light", "text-dark");
-            body.classList.remove("bg-dark", "text-white");
+            body.classList.add('bg-light', 'text-dark');
+            body.classList.remove('bg-dark', 'text-white');
+            if (navbar) {
+                navbar.classList.add('navbar-light', 'bg-light');
+                navbar.classList.remove('navbar-dark', 'bg-dark');
+            }
+            themeToggleSwitch.checked = false;
+            document.querySelector('.slider:before')?.style?.setProperty('background-image', "url('<%= request.getContextPath() %>/img/sun.gif')");
         }
+
+        localStorage.setItem('theme', theme);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        const currentTheme = localStorage.getItem("theme") || "light";
-        applyTheme(currentTheme);
+        const savedTheme = localStorage.getItem("theme") || "light";
+        applyTheme(savedTheme);
 
-        const toggleBtn = document.getElementById("themeToggle");
-        if (toggleBtn) {
-            toggleBtn.addEventListener("click", () => {
-                const newTheme = localStorage.getItem("theme") === "dark" ? "light" : "dark";
-                localStorage.setItem("theme", newTheme);
-                applyTheme(newTheme);
-            });
-        }
+        themeToggleSwitch?.addEventListener("change", () => {
+            const newTheme = themeToggleSwitch.checked ? "dark" : "light";
+            applyTheme(newTheme);
+        });
     });
 </script>
 

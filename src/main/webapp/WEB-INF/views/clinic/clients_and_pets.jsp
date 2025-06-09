@@ -25,7 +25,24 @@
         <c:forEach var="client" items="${clients}">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    Client: ${client.firstName} ${client.lastName} (${client.user.username}) - Address: ${client.address}
+                    Client: ${client.firstName} ${client.lastName} (${client.user.username})
+                    - Address:
+                        ${client.streetAddress}
+                    <c:if test="${not empty client.apartmentNumber}">
+                        , Daire: ${client.apartmentNumber}
+                    </c:if>
+                    <c:if test="${not empty client.locality}">
+                        , ${client.locality.name}
+                    </c:if>
+                    <c:if test="${not empty client.locality.district}">
+                        / ${client.locality.district.name}
+                    </c:if>
+                    <c:if test="${not empty client.locality.district.city}">
+                        / ${client.locality.district.city.name}
+                    </c:if>
+                    <c:if test="${not empty client.postalCode}">
+                        - ${client.postalCode}
+                    </c:if>
                 </div>
                 <div class="card-body">
                     <h5>Pets:</h5>
@@ -36,7 +53,6 @@
                                 <c:set var="hasPetsForClinic" value="true" />
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                         ${pet.name} (Species: ${pet.species.speciesName}, Breed: ${pet.breed.breedName}, Age: ${pet.age})
-                                    <!-- Add more pet details if needed -->
                                 </li>
                             </c:if>
                         </c:forEach>

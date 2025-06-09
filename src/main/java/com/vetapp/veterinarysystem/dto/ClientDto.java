@@ -7,6 +7,11 @@ public class ClientDto {
     private Long clientId;
     private String firstName;
     private String lastName;
-    private String address;
+    private Integer cityCode;
+    private Integer districtCode;
+    private Long localityCode;
+    private String streetAddress;
+    private String apartmentNumber;
+    private String postalCode;
     private String username;
 }

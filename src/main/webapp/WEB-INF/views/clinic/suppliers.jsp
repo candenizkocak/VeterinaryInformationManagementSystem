@@ -42,10 +42,43 @@
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control" value="${newSupplier.email}">
         </div>
-        <div class="col-md-6">
-            <label class="form-label">Address</label>
-            <input type="text" name="address" class="form-control" value="${newSupplier.address}">
+
+        <%-- ADRES BİLGİLERİ BAŞLANGICI --%>
+        <div class="col-md-4">
+            <label for="citySelect" class="form-label">City</label>
+            <select name="cityCode" id="citySelect" class="form-select" required>
+                <option value="">Select City</option>
+                <c:forEach var="city" items="${cities}">
+                    <option value="${city.code}">${city.name}</option>
+                </c:forEach>
+            </select>
         </div>
+
+        <div class="col-md-4">
+            <label for="districtSelect" class="form-label">District</label>
+            <select name="districtCode" id="districtSelect" class="form-select" required>
+                <option value="">Select District</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="localitySelect" class="form-label">Locality</label>
+            <select name="localityCode" id="localitySelect" class="form-select" required>
+                <option value="">Select Locality</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="streetAddress" class="form-label">Street Address (Street Name, Building No, etc.)</label>
+            <input type="text" name="streetAddress" id="streetAddress" class="form-control" value="${newSupplier.streetAddress}" required maxlength="255">
+        </div>
+
+        <div class="col-md-6">
+            <label for="postalCode" class="form-label">Postal Code (Optional)</label>
+            <input type="text" name="postalCode" id="postalCode" class="form-control" value="${newSupplier.postalCode}" maxlength="10">
+        </div>
+        <%-- ADRES BİLGİLERİ SONU --%>
+
         <div class="col-12">
             <button type="submit" class="btn btn-success">Add Supplier</button>
         </div>
@@ -65,17 +98,15 @@
         </tr>
         </thead>
         <tbody>
-        <c:if test="${empty suppliers}">
-            <tr><td colspan="7" class="text-center">No suppliers found.</td></tr>
-        </c:if>
         <c:forEach var="supplier" items="${suppliers}">
             <tr>
-                <td>${supplier.supplierId}</td>
-                <td>${supplier.companyName}</td>
-                <td>${supplier.contactName}</td>
-                <td>${supplier.phone}</td>
-                <td>${supplier.email}</td>
-                <td>${supplier.address}</td>
+                <td><c:out value="${supplier.supplierId}"/></td>
+                <td><c:out value="${supplier.companyName}"/></td>
+                <td><c:out value="${supplier.contactName}"/></td>
+                <td><c:out value="${supplier.phone}"/></td>
+                <td><c:out value="${supplier.email}"/></td>
+                    <%-- Formatlanmış adresi kullanıyoruz --%>
+                <td><c:out value="${supplier.formattedAddress}"/></td>
                 <td>
                     <form action="/clinic/suppliers/delete/${supplier.supplierId}" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this supplier?')">Delete</button>
@@ -89,6 +120,7 @@
 
 <script>
     $(document).ready(function () {
+        // DataTables başlatma
         $('#supplierTable').DataTable({
             pageLength: 10,
             lengthMenu: [5, 10, 25, 50, 100],
@@ -96,45 +128,126 @@
                 { orderable: false, targets: -1 }
             ]
         });
-    });
-</script>
 
-<script>
-    const themeToggleSwitch = document.getElementById('themeToggleSwitch');
-    const body = document.getElementById('pageBody');
-    const navbar = document.getElementById('mainNavbar');
+        // Adres Combo Box'ları için elementleri seç
+        const citySelect = $('#citySelect');
+        const districtSelect = $('#districtSelect');
+        const localitySelect = $('#localitySelect');
 
-    function applyTheme(theme) {
-        if (theme === 'dark') {
-            body.classList.add('bg-dark', 'text-white');
-            body.classList.remove('bg-light', 'text-dark');
-            if (navbar) {
-                navbar.classList.add('navbar-dark', 'bg-dark');
-                navbar.classList.remove('navbar-light', 'bg-light');
+        // Form yeniden yüklendiğinde (örn. hata sonrası) adres bilgilerini tutmak için
+        // JSTL'den gelen değerler, JavaScript'te null veya 'null' stringi olabilir.
+        const initialCityCode = ${newSupplier.cityCode != null ? newSupplier.cityCode : 'null'};
+        const initialDistrictCode = ${newSupplier.districtCode != null ? newSupplier.districtCode : 'null'};
+        const initialLocalityCode = ${newSupplier.localityCode != null ? newSupplier.localityCode : 'null'};
+
+        // Fonksiyon: İlçeleri Yükle
+        // Parametreler: cityCode (seçilen şehir kodu), selectedDistrictCode (önceden seçili ilçe kodu), callback (ilçeler yüklendikten sonra çalışacak fonksiyon)
+        function loadDistricts(cityCode, selectedDistrictCode, callback) {
+            districtSelect.empty().append('<option value="">Loading districts...</option>');
+            localitySelect.empty().append('<option value="">Select Locality</option>');
+            districtSelect.prop('disabled', true); // Yükleme başlarken ilçe ve mahalleleri devre dışı bırak
+            localitySelect.prop('disabled', true);
+
+            if (cityCode) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/api/addresses/districts/' + cityCode,
+                    type: 'GET',
+                    success: function(data) {
+                        districtSelect.empty().append('<option value="">Select District</option>');
+                        if (data && data.length > 0) {
+                            data.forEach(function(district) {
+                                districtSelect.append($('<option>', {
+                                    value: district.code,
+                                    text: district.name,
+                                    selected: (selectedDistrictCode !== null && district.code == selectedDistrictCode) // Ön seçim
+                                }));
+                            });
+                            districtSelect.prop('disabled', false); // Başarılı yüklemede etkinleştir
+                        } else {
+                            districtSelect.append('<option value="">No districts found</option>');
+                        }
+                        if (callback) callback(); // Callback'i çağır
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading districts:", status, error);
+                        districtSelect.empty().append('<option value="">Error loading districts</option>');
+                        districtSelect.prop('disabled', true); // Hata durumunda devre dışı bırak
+                    }
+                });
+            } else {
+                districtSelect.empty().append('<option value="">Select City first</option>');
+                districtSelect.prop('disabled', true);
             }
-            themeToggleSwitch.checked = true;
-            document.querySelector('.slider:before')?.style?.setProperty('background-image', "url('<%= request.getContextPath() %>/img/moon.gif')");
-        } else {
-            body.classList.add('bg-light', 'text-dark');
-            body.classList.remove('bg-dark', 'text-white');
-            if (navbar) {
-                navbar.classList.add('navbar-light', 'bg-light');
-                navbar.classList.remove('navbar-dark', 'bg-dark');
-            }
-            themeToggleSwitch.checked = false;
-            document.querySelector('.slider:before')?.style?.setProperty('background-image', "url('<%= request.getContextPath() %>/img/sun.gif')");
         }
-        localStorage.setItem('theme', theme);
-    }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        applyTheme(savedTheme);
+        // Fonksiyon: Mahalleleri Yükle
+        // Parametreler: districtCode (seçilen ilçe kodu), selectedLocalityCode (önceden seçili mahalle kodu)
+        function loadLocalities(districtCode, selectedLocalityCode) {
+            localitySelect.empty().append('<option value="">Loading localities...</option>');
+            localitySelect.prop('disabled', true); // Yükleme başlarken devre dışı bırak
 
-        themeToggleSwitch?.addEventListener("change", () => {
-            const newTheme = themeToggleSwitch.checked ? "dark" : "light";
-            applyTheme(newTheme);
+            if (districtCode) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/api/addresses/localities/' + districtCode,
+                    type: 'GET',
+                    success: function(data) {
+                        localitySelect.empty().append('<option value="">Select Locality</option>');
+                        if (data && data.length > 0) {
+                            data.forEach(function(locality) {
+                                localitySelect.append($('<option>', {
+                                    value: locality.code,
+                                    text: locality.name,
+                                    selected: (selectedLocalityCode !== null && locality.code == selectedLocalityCode) // Ön seçim
+                                }));
+                            });
+                            localitySelect.prop('disabled', false); // Başarılı yüklemede etkinleştir
+                        } else {
+                            localitySelect.append('<option value="">No localities found</option>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading localities:", status, error);
+                        localitySelect.empty().append('<option value="">Error loading localities</option>');
+                        localitySelect.prop('disabled', true); // Hata durumunda devre dışı bırak
+                    }
+                });
+            } else {
+                localitySelect.empty().append('<option value="">Select District first</option>');
+                localitySelect.prop('disabled', true);
+            }
+        }
+
+        // Event Listeners: Combo Box değişimlerini dinle
+        citySelect.on('change', function() {
+            const selectedCityCode = $(this).val();
+            // Şehir değişince ilçe ve mahalle seçimlerini sıfırla, yeni ilçeleri yükle
+            loadDistricts(selectedCityCode, null, null);
         });
+
+        districtSelect.on('change', function() {
+            const selectedDistrictCode = $(this).val();
+            // İlçe değişince mahalle seçimini sıfırla, yeni mahalleleri yükle
+            loadLocalities(selectedDistrictCode, null);
+        });
+
+        // Sayfa yüklendiğinde başlangıç durumunu ayarla ve ön seçimleri yap
+        // Eğer form hata sonrası yeniden yüklendiyse (newSupplier objesi doluysa), bu kısım adresleri önceden seçecektir.
+        // JSTL'den gelen 'null' stringini de kontrol etmek önemlidir.
+        if (initialCityCode !== null && initialCityCode !== 'null') {
+            citySelect.val(initialCityCode); // Şehri seç
+            // İlçeleri yükle ve ilçe seçildikten sonra mahalleleri yükle
+            loadDistricts(initialCityCode, initialDistrictCode, function() {
+                if (initialDistrictCode !== null && initialDistrictCode !== 'null') {
+                    loadLocalities(initialDistrictCode, initialLocalityCode);
+                }
+            });
+        } else {
+            // Eğer başlangıçta seçili bir şehir yoksa (yeni form durumu), ilçe ve mahalle combo box'larını devre dışı bırak
+            districtSelect.prop('disabled', true);
+            localitySelect.prop('disabled', true);
+            districtSelect.empty().append('<option value="">Select City first</option>');
+            localitySelect.empty().append('<option value="">Select District first</option>');
+        }
     });
 </script>
 </body>

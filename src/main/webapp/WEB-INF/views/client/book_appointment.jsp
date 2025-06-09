@@ -11,17 +11,11 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
     <!-- Bu sayfaya özel CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/client/book_appointment.css">
-
-    <%--
-    ÖNEMLİ: Bu JSP'nin orijinalinde bulunan <style> bloğundaki stil kuralları buraya taşındı:
-    src/main/resources/static/css/client/book_appointment.css
-    --%>
 </head>
 <body id="pageBody">
-<jsp:include page="navbar.jsp"/> <%-- Client modülüne özel navbar'ı dahil eder --%>
+<jsp:include page="navbar.jsp"/>
 
 <div class="appt-card">
-    <%-- Burası orijinal JSP'nin ana HTML içeriğiydi --%>
     <div class="appt-title"><i class="bi bi-calendar-plus"></i> Book New Appointment</div>
 
     <c:if test="${not empty successMessage}">
@@ -47,7 +41,7 @@
             <select name="clinicId" id="clinicSelect" class="form-select" required>
                 <option value="">Select a clinic</option>
                 <c:forEach var="clinic" items="${clinics}">
-                    <option value="${clinic.clinicId}">${clinic.clinicName} (${clinic.location})</option>
+                    <option value="${clinic.clinicId}">${clinic.clinicName} (${clinic.formattedAddress})</option> <%-- formattedAddress kullanıldı --%>
                 </c:forEach>
             </select>
         </div>
@@ -91,14 +85,16 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Bu JavaScript bloğu, appointments.jsp'deki DataTables dışındaki tek JavaScript fonksiyonu gibi
-    // görünüyor ve tema geçişiyle ilgili değil. Dolayısıyla olduğu gibi kalabilir.
     $(document).ready(function () {
         const petSelect = $('#petSelect');
         const clinicSelect = $('#clinicSelect');
         const dateInput = $('#dateInput');
         const veterinarySelect = $('#veterinarySelect');
         const timeSelect = $('#timeSelect');
+
+        const preselectedClinicId = ${not empty preselectedClinicId ? preselectedClinicId : 'null'};
+        const preselectedVeterinaryId = ${not empty preselectedVeterinaryId ? preselectedVeterinaryId : 'null'};
+        const initialAppointmentDate = '${param.appointmentDate}';
 
         function fetchVeterinariesAndResetTimes() {
             const clinicId = clinicSelect.val();
@@ -126,6 +122,12 @@
                                 }));
                             });
                             veterinarySelect.prop('disabled', false);
+
+
+                            if (preselectedVeterinaryId !== null) {
+                                veterinarySelect.val(preselectedVeterinaryId);
+                                fetchAvailableSlots();
+                            }
                         } else {
                             veterinarySelect.append('<option value="">No veterinarians available for this clinic/date</option>');
                         }
@@ -177,11 +179,19 @@
             }
         }
 
+
         clinicSelect.on('change', fetchVeterinariesAndResetTimes);
         dateInput.on('change', fetchVeterinariesAndResetTimes);
         veterinarySelect.on('change', fetchAvailableSlots);
 
-        if (clinicSelect.val() && dateInput.val()) {
+
+        if (preselectedClinicId !== null) {
+            clinicSelect.val(preselectedClinicId);
+
+            if (initialAppointmentDate) {
+                dateInput.val(initialAppointmentDate);
+            }
+
             fetchVeterinariesAndResetTimes();
         }
     });

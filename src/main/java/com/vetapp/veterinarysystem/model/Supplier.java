@@ -31,6 +31,19 @@ public class Supplier {
     @Column(name = "Email", length = 100)
     private String email;
 
-    @Column(name = "Address", length = 255)
-    private String address;
+    // --- ESKİ ADRES SÜTUNU KALDIRILDI ---
+    // @Column(name = "Address", length = 255)
+    // private String address;
+
+    // --- YENİ ADRES BİLGİLERİ EKLENDİ ---
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LocalityCode", referencedColumnName = "Code") // Mahalle kodu (BIGINT)
+    private Locality locality;
+
+    @Column(name = "StreetAddress", length = 255) // Sokak adı, bina numarası gibi detaylar
+    private String streetAddress;
+
+    @Column(name = "PostalCode", length = 10) // Posta kodu
+    private String postalCode;
+    // --- YENİ ADRES BİLGİLERİ SONU ---
 }

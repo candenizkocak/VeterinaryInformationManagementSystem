@@ -49,7 +49,7 @@
                     </div>
                 </c:when>
                 <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
-                     <div class="card shadow-lg rounded-4 border-0 mb-5" style="background: linear-gradient(135deg,#cce7ff 70%,#e6f7ff 100%);">
+                    <div class="card shadow-lg rounded-4 border-0 mb-5" style="background: linear-gradient(135deg,#cce7ff 70%,#e6f7ff 100%);">
                         <div class="card-header bg-transparent border-0 pt-4 pb-3">
                             <h3 class="fw-bold text-primary text-center mb-0">
                                 <span style="font-size:2em;">👤</span> Client Panel
@@ -73,6 +73,10 @@
                                 <a href="/api/clients/add-animal" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
                                     <span style="font-size:2.2em;">🐶</span>
                                     <span class="fw-semibold mt-2">Add Animal</span>
+                                </a>
+                                <a href="/api/clients/our-clinics" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;"> <%-- <--- YENİ EKLENEN BAĞLANTI --%>
+                                    <span style="font-size:2.2em;">🏥</span>
+                                    <span class="fw-semibold mt-2">Our Clinics</span>
                                 </a>
                             </div>
                         </div>
