@@ -3,6 +3,8 @@ package com.vetapp.veterinarysystem.controller;
 import com.vetapp.veterinarysystem.dto.VeterinaryDto;
 import com.vetapp.veterinarysystem.dto.AppointmentDTO;
 import com.vetapp.veterinarysystem.model.Appointment;
+import com.vetapp.veterinarysystem.model.Review; // Review modelini import et
+import com.vetapp.veterinarysystem.service.ReviewService; // ReviewService'i import et
 import com.vetapp.veterinarysystem.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional; // BU IMPORT'U EKLEYİN
 
 
 //@RestController //Eski
@@ -46,8 +50,10 @@ public class VeterinaryController {
     private final SurgeryService surgeryService; // Eklendi
     private final VeterinaryRepository veterinaryRepository; // Eklendi
     private final UserService userService;
+    private final ReviewService reviewService; // ReviewService'i ekle
 
-    public VeterinaryController(VeterinaryService veterinaryService, AppointmentService appointmentService, PetService petService, VaccinationService vaccinationService, VaccineTypeService vaccineTypeService, SurgeryTypeService surgeryTypeService, SurgeryService surgeryService, VeterinaryRepository veterinaryRepository, UserService userService) {
+
+    public VeterinaryController(VeterinaryService veterinaryService, AppointmentService appointmentService, PetService petService, VaccinationService vaccinationService, VaccineTypeService vaccineTypeService, SurgeryTypeService surgeryTypeService, SurgeryService surgeryService, VeterinaryRepository veterinaryRepository, UserService userService, ReviewService reviewService) {
         this.veterinaryService = veterinaryService;
         this.appointmentService = appointmentService;
         this.petService = petService;
@@ -57,6 +63,7 @@ public class VeterinaryController {
         this.surgeryService = surgeryService;
         this.veterinaryRepository = veterinaryRepository;
         this.userService = userService;
+        this.reviewService = reviewService;
     }
 
     /*
@@ -396,6 +403,54 @@ public class VeterinaryController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating status: " + e.getMessage());
         }
         return "redirect:/veterinary/appointments";
+    }
+
+
+
+    // YENİ METOT: Veterinerin yorumlarını listeleyen sayfa
+    @GetMapping("/reviews")
+    @Transactional(readOnly = true) // BU ANOTASYONU EKLEYİN
+    public String showMyReviews(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        // Giriş yapmış veterineri bul
+        Optional<Veterinary> veterinaryOpt = veterinaryService.getAllVeterinaryEntities().stream()
+                .filter(v -> v.getUser().getUsername().equals(principal.getName()))
+                .findFirst();
+
+        if (veterinaryOpt.isEmpty()) {
+            model.addAttribute("errorMessage", "Veterinary profile not found.");
+            return "error";
+        }
+
+        // 1. Servisten veriyi al (Bu aşamada ilişkili veriler LAZY durumda olabilir)
+        List<Review> reviews = reviewService.getReviewsByVeterinaryId(veterinaryOpt.get().getVeterinaryId());
+
+        // 2. İhtiyaç duyulan LAZY verileri manuel olarak tetikle
+        // Bu döngü, JSP'ye gitmeden ÖNCE çalışarak gerekli verilerin yüklenmesini sağlar.
+        // Aslında sadece bir "get" işlemi yapmak bile yeterlidir.
+        reviews.forEach(review -> {
+            // review.getAppointment().getPet().getClient().getFirstName(); // Bu satır tek başına yeterli
+            // Daha okunabilir olması için:
+            if (review.getAppointment() != null && review.getAppointment().getPet() != null) {
+                // Sadece client'e erişmek bile client proxy'sini yükler.
+                review.getAppointment().getPet().getClient().getFirstName();
+            }
+        });
+
+        model.addAttribute("reviews", reviews); // Artık 'reviews' listesindeki proxy'ler dolu.
+
+        // Ortalama puanı hesapla ve modele ekle
+        double averageRating = reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+        model.addAttribute("averageRating", String.format("%.1f", averageRating));
+        model.addAttribute("totalReviews", reviews.size());
+
+        return "veterinary/my_reviews";
     }
 
 

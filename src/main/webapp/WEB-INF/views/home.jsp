@@ -85,13 +85,30 @@
 
 
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
-                    <div class="alert alert-success text-center">
-                        <h4>Welcome to Veterinary Panel</h4>
-                        <a href="/veterinary/appointments" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
-                            <span style="font-size:2.2em;">📅</span>
-                            <span class="fw-semibold mt-2">My Appointments</span>
-                        </a>
-                    </div>
+                    <div class="alert alert-success text-center border-0" style="background-color: #d1e7dd;">
+                            <h4 class="mb-4">Welcome to the Veterinary Panel</h4>
+
+                            <%-- Kutuları yan yana hizalamak için bir container --%>
+                            <div class="d-flex justify-content-center align-items-stretch gap-4">
+
+                                <%-- 1. My Appointments Kutusu --%>
+                                <a href="${pageContext.request.contextPath}/veterinary/appointments"
+                                   class="btn btn-lg btn-light shadow-sm rounded-4 px-4 py-3 d-flex flex-column align-items-center text-decoration-none"
+                                   style="min-width: 180px; transition: all 0.2s ease-in-out;">
+                                    <span style="font-size: 2.5em; line-height: 1;">📅</span>
+                                    <span class="fw-semibold mt-2">Appointments</span>
+                                </a>
+
+                                <%-- 2. My Reviews Kutusu (YENİ EKLENDİ) --%>
+                                <a href="${pageContext.request.contextPath}/veterinary/reviews"
+                                   class="btn btn-lg btn-light shadow-sm rounded-4 px-4 py-3 d-flex flex-column align-items-center text-decoration-none"
+                                   style="min-width: 180px; transition: all 0.2s ease-in-out;">
+                                    <span style="font-size: 2.5em; line-height: 1;">⭐</span>
+                                    <span class="fw-semibold mt-2">Reviews</span>
+                                </a>
+
+                            </div>
+                        </div>
                 </c:when>
 
                 <c:when test="${sessionScope.role == 'ROLE_CLINIC'}">

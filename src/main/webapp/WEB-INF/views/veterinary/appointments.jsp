@@ -176,7 +176,14 @@
                 <td>${appt.clientName}</td>
                 <td>${appt.clinicName}</td>
                 <td>${appt.appointmentDate}</td>
-                <td>${appt.status}</td>
+                <td class="text-center">
+                    <c:choose>
+                        <c:when test="${appt.status == 'Planned'}"><span class="badge bg-warning px-3 py-2 rounded-pill">Planned</span></c:when>
+                        <c:when test="${appt.status == 'Completed'}"><span class="badge bg-success px-3 py-2 rounded-pill">Completed</span></c:when>
+                        <c:when test="${appt.status == 'Cancelled'}"><span class="badge bg-danger px-3 py-2 rounded-pill">Cancelled</span></c:when>
+                        <c:otherwise><span class="badge bg-secondary px-3 py-2 rounded-pill">${appt.status}</span></c:otherwise>
+                    </c:choose>
+                </td>
                 <td>
                     <a href="${pageContext.request.contextPath}/veterinary/appointments/update-status/${appt.appointmentId}" class="btn btn-success btn-sm">
                         Update Status
