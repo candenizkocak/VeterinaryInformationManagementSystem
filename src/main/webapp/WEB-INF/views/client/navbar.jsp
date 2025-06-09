@@ -114,7 +114,7 @@
 <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-modern sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
-            <i class="bi bi-hospital"></i> VetApp
+            <i class="bi bi-hospital"></i> PetPoint
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
