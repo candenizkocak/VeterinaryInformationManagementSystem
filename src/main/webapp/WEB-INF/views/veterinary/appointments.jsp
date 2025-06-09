@@ -178,11 +178,15 @@
                 <td>${appt.appointmentDate}</td>
                 <td>${appt.status}</td>
                 <td>
-                    <a href="${pageContext.request.contextPath}/veterinary/appointments/${appt.appointmentId}/vaccinations" class="btn btn-info btn-sm">
+                    <a href="${pageContext.request.contextPath}/veterinary/appointments/update-status/${appt.appointmentId}" class="btn btn-success btn-sm">
+                        Update Status
+                    </a>
+
+                    <a href="${pageContext.request.contextPath}/veterinary/appointments/${appt.appointmentId}/vaccinations" class="btn btn-primary btn-sm">
                         Vaccinations
                     </a>
 
-                    <a href="${pageContext.request.contextPath}/veterinary/appointments/${appt.appointmentId}/surgeries" class="btn btn-warning btn-sm"> <%-- YENİ LİNK --%>
+                    <a href="${pageContext.request.contextPath}/veterinary/appointments/${appt.appointmentId}/surgeries" class="btn btn-warning btn-sm">
                         Surgeries
                     </a>
 

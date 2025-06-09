@@ -87,7 +87,10 @@
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                     <div class="alert alert-success text-center">
                         <h4>Welcome to Veterinary Panel</h4>
-                        <a href="/veterinary/appointments" class="btn btn-light mt-2">My Appointments</a>
+                        <a href="/veterinary/appointments" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
+                            <span style="font-size:2.2em;">📅</span>
+                            <span class="fw-semibold mt-2">My Appointments</span>
+                        </a>
                     </div>
                 </c:when>
 

@@ -1,6 +1,7 @@
 package com.vetapp.veterinarysystem.controller;
 
 import com.vetapp.veterinarysystem.dto.VeterinaryDto;
+import com.vetapp.veterinarysystem.dto.AppointmentDTO;
 import com.vetapp.veterinarysystem.model.Appointment;
 import com.vetapp.veterinarysystem.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,6 +24,7 @@ import com.vetapp.veterinarysystem.service.SurgeryTypeService;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -43,8 +45,9 @@ public class VeterinaryController {
     private final SurgeryTypeService surgeryTypeService; // Eklendi
     private final SurgeryService surgeryService; // Eklendi
     private final VeterinaryRepository veterinaryRepository; // Eklendi
+    private final UserService userService;
 
-    public VeterinaryController(VeterinaryService veterinaryService, AppointmentService appointmentService, PetService petService, VaccinationService vaccinationService, VaccineTypeService vaccineTypeService, SurgeryTypeService surgeryTypeService, SurgeryService surgeryService, VeterinaryRepository veterinaryRepository) {
+    public VeterinaryController(VeterinaryService veterinaryService, AppointmentService appointmentService, PetService petService, VaccinationService vaccinationService, VaccineTypeService vaccineTypeService, SurgeryTypeService surgeryTypeService, SurgeryService surgeryService, VeterinaryRepository veterinaryRepository, UserService userService) {
         this.veterinaryService = veterinaryService;
         this.appointmentService = appointmentService;
         this.petService = petService;
@@ -53,6 +56,7 @@ public class VeterinaryController {
         this.surgeryTypeService = surgeryTypeService;
         this.surgeryService = surgeryService;
         this.veterinaryRepository = veterinaryRepository;
+        this.userService = userService;
     }
 
     /*
@@ -358,4 +362,41 @@ public class VeterinaryController {
         redirectAttributes.addFlashAttribute("success", "Surgery deleted successfully.");
         return "redirect:/veterinary/appointments/" + appointmentId + "/surgeries";
     }
+
+
+
+    /**
+     * Randevu durumu güncelleme formunu gösterir. (GET)
+     */
+    @GetMapping("/appointments/update-status/{id}")
+    public String showUpdateStatusForm(@PathVariable Long id, Model model) {
+        Appointment appointment = appointmentService.getAppointmentById(id);
+        if (appointment == null) {
+            return "redirect:/veterinary/appointments";
+        }
+
+        List<String> statuses = Arrays.asList("Scheduled", "Completed", "Canceled", "No-Show");
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("statuses", statuses);
+
+        return "veterinary/update_appointment_status";
+    }
+
+    /**
+     * Randevu durumunu günceller. (POST)
+     */
+    @PostMapping("/appointments/update-status")
+    public String updateAppointmentStatus(@RequestParam Long appointmentId,
+                                          @RequestParam String status,
+                                          RedirectAttributes redirectAttributes) {
+        try {
+            appointmentService.updateAppointmentStatus(appointmentId, status);
+            redirectAttributes.addFlashAttribute("successMessage", "Appointment status updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating status: " + e.getMessage());
+        }
+        return "redirect:/veterinary/appointments";
+    }
+
+
 }

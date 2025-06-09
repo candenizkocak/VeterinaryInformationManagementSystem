@@ -17,4 +17,6 @@ public interface AppointmentService {
     List<Appointment> getAppointmentsByVeterinaryId(Long veterinaryId); // Added
 
     void cancelAppointment(Long appointmentId, Long clientId) throws IllegalArgumentException;
+
+    void updateAppointmentStatus(Long appointmentId, String newStatus);
 }

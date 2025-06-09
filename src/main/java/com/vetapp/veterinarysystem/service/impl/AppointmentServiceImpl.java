@@ -192,4 +192,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus("Cancelled");
         appointmentRepository.save(appointment);
     }
+
+
+    // YENİ METOT IMPLEMENTASYONU
+    @Override
+    public void updateAppointmentStatus(Long appointmentId, String newStatus) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with ID: " + appointmentId));
+
+        appointment.setStatus(newStatus);
+        appointmentRepository.save(appointment);
+    }
 }
