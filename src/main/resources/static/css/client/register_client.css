@@ -62,7 +62,7 @@ body.bg-dark .form-label {
 }
 
 /* Form kontrolleri (input) */
-.form-control {
+.form-control, .form-select {
     border-radius: 12px;
     font-size: 1.1rem;
     padding: 12px;
@@ -71,17 +71,17 @@ body.bg-dark .form-label {
     border: 1px solid #e0e6ef;
     transition: all 0.3s ease; /* Hover ve focus animasyonu */
 }
-.form-control:focus {
+.form-control:focus, .form-select:focus {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
     background-color: #fff;
 }
-body.bg-dark .form-control {
+body.bg-dark .form-control, body.bg-dark .form-select {
     background-color: #1e1e1e !important;
     color: #fff !important;
     border-color: #555 !important;
 }
-body.bg-dark .form-control:focus {
+body.bg-dark .form-control:focus, body.bg-dark .form-select:focus {
     border-color: #6da7f7;
     box-shadow: 0 0 0 0.25rem rgba(109, 167, 247, 0.35);
     background-color: #252525 !important;
@@ -89,6 +89,11 @@ body.bg-dark .form-control:focus {
 body.bg-dark .form-control::placeholder {
     color: #aaa !important;
 }
+body.bg-dark .form-select option {
+    background-color: #1e1e1e; /* Koyu temada select option arka planı */
+    color: #fff; /* Koyu temada select option metin rengi */
+}
+
 
 /* Buton stili */
 .btn-create-profile {
@@ -120,6 +125,55 @@ body.bg-dark .btn-create-profile {
 body.bg-dark .btn-create-profile:hover, body.bg-dark .btn-create-profile:focus {
     background: linear-gradient(90deg, #a7d9ff 0%, #6da7f7 100%) !important;
     box-shadow: 0 12px 40px 0 rgba(109, 167, 247, 0.5);
+}
+
+/* Alert Stilini temaya uygun hale getirme */
+.alert {
+    border-radius: 10px;
+    font-size: 1.09rem;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 8px 0 rgba(0, 153, 102, 0.07); /* Genel gölge ayarı */
+}
+body.bg-dark .alert-success {
+    background-color: #28a745;
+    color: #fff;
+}
+body.bg-dark .alert-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Back Home Button (Mini version) */
+.btn-home-mini {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 15px;
+    border-radius: 12px;
+    background: #e9f5ff;
+    color: #007bff;
+    border: 1px solid #c2e0ff;
+    font-weight: 600;
+    transition: all 0.2s ease-out;
+}
+.btn-home-mini:hover {
+    background: #d4ecff;
+    color: #0056b3;
+    border-color: #a0d8ff;
+}
+body.bg-dark .btn-home-mini {
+    background: #3a3a3a !important;
+    color: #8bbfff !important;
+    border-color: #5c9eff !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+body.bg-dark .btn-home-mini:hover {
+    background: #494949 !important;
+    color: #c0e0ff !important;
+    border-color: #8bbfff !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
 }
 
 /* Animasyon */
