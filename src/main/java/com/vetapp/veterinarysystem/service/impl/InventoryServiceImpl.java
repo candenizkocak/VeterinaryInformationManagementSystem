@@ -40,7 +40,7 @@ public class InventoryServiceImpl implements InventoryService {
         // Ensure associated entities are managed
         Clinic clinic = clinicRepository.findById(inventoryItem.getClinic().getClinicId())
                 .orElseThrow(() -> new RuntimeException("Clinic not found"));
-        ItemType itemType = itemTypeRepository.findById(inventoryItem.getItemType().getItemTypeId())
+        ItemType itemType = itemTypeRepository.findById(inventoryItem.getItemTypeId().getItemTypeId())
                 .orElseThrow(() -> new RuntimeException("Item Type not found"));
         Supplier supplier = null;
         if (inventoryItem.getSupplier() != null && inventoryItem.getSupplier().getSupplierId() != null) {
@@ -49,7 +49,7 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         inventoryItem.setClinic(clinic);
-        inventoryItem.setItemType(itemType);
+        inventoryItem.setItemTypeId(itemType);
         inventoryItem.setSupplier(supplier);
         inventoryItem.setLastUpdated(LocalDateTime.now()); // Set current timestamp
         return inventoryRepository.save(inventoryItem);
@@ -63,7 +63,7 @@ public class InventoryServiceImpl implements InventoryService {
         // Ensure associated entities are managed
         Clinic clinic = clinicRepository.findById(inventoryItem.getClinic().getClinicId())
                 .orElseThrow(() -> new RuntimeException("Clinic not found"));
-        ItemType itemType = itemTypeRepository.findById(inventoryItem.getItemType().getItemTypeId())
+        ItemType itemType = itemTypeRepository.findById(inventoryItem.getItemTypeId().getItemTypeId())
                 .orElseThrow(() -> new RuntimeException("Item Type not found"));
         Supplier supplier = null;
         if (inventoryItem.getSupplier() != null && inventoryItem.getSupplier().getSupplierId() != null) {
@@ -72,7 +72,7 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         existingItem.setClinic(clinic);
-        existingItem.setItemType(itemType);
+        existingItem.setItemTypeId(itemType);
         existingItem.setSupplier(supplier);
         existingItem.setQuantity(inventoryItem.getQuantity());
         existingItem.setLastUpdated(LocalDateTime.now()); // Update last updated time

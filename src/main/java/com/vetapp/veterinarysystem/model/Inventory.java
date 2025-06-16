@@ -27,7 +27,7 @@ public class Inventory {
 
     @ManyToOne
     @JoinColumn(name = "ItemTypeID", nullable = false)
-    private ItemType itemType;
+    private ItemType itemTypeId;
 
     @ManyToOne
     @JoinColumn(name = "SupplierID")

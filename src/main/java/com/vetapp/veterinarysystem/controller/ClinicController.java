@@ -329,9 +329,11 @@ public class ClinicController {
         }
         return "redirect:/clinic/inventory";
     }
-
-    @PostMapping("/inventory/update/{id}")
-    public String updateInventoryItem(@PathVariable Long id, @ModelAttribute Inventory inventoryItem, Principal principal, RedirectAttributes redirectAttributes) {
+    @PostMapping("/inventory/update")
+    public String updateInventoryItem(@RequestParam("itemId") Long id,
+                                      @ModelAttribute Inventory inventoryItem,
+                                      Principal principal,
+                                      RedirectAttributes redirectAttributes) {
         try {
             Clinic clinic = getCurrentClinic(principal);
             Inventory existingItem = inventoryService.getInventoryItemById(id);
@@ -340,7 +342,8 @@ public class ClinicController {
                 redirectAttributes.addFlashAttribute("error", "You do not have permission to update this inventory item.");
                 return "redirect:/clinic/inventory";
             }
-            inventoryItem.setItemId(id);
+
+            inventoryItem.setItemId(id); // Bu çok önemli!
             inventoryItem.setClinic(clinic);
             inventoryService.updateInventoryItem(inventoryItem);
             redirectAttributes.addFlashAttribute("success", "Inventory item updated successfully!");
@@ -350,11 +353,7 @@ public class ClinicController {
         return "redirect:/clinic/inventory";
     }
 
-    @PostMapping("/inventory/update/")
-    public String updateInventoryItemWithoutId(Principal principal, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("error", "No inventory item ID was provided for update. Please try again.");
-        return "redirect:/clinic/inventory";
-    }
+
 
     @PostMapping("/inventory/delete/{id}")
     public String deleteInventoryItem(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
