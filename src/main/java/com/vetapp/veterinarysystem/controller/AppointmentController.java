@@ -222,6 +222,7 @@ public class AppointmentController {
     }
 
 
+    /*
     @PostMapping("/delete/{id}")
     public String deleteAppointment(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
         Veterinary loggedInVeterinary = getLoggedInVeterinary(principal);
@@ -238,7 +239,37 @@ public class AppointmentController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error deleting appointment: " + e.getMessage());
         }
         return "redirect:/veterinary/appointments";
+    }*/
+
+    @PostMapping("/delete/{id}")
+    public String deleteAppointment(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+        // Güvenlik ve yetkilendirme kontrolü
+        Veterinary loggedInVeterinary = getLoggedInVeterinary(principal);
+        Appointment appointmentToDelete = appointmentService.getAppointmentById(id);
+
+        if (appointmentToDelete == null || !appointmentToDelete.getVeterinary().getVeterinaryId().equals(loggedInVeterinary.getVeterinaryId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Appointment not found or you are not authorized for this action.");
+            return "redirect:/veterinary/appointments";
+        }
+
+        // Silme işlemini try-catch bloğunda yap
+        try {
+            appointmentService.deleteAppointment(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Appointment deleted successfully!");
+        } catch (IllegalStateException e) {
+            // Service katmanından fırlatılan özel hatayı yakala.
+            // e.getMessage() yerine kendi özel mesajımızı kullanıyoruz.
+            redirectAttributes.addFlashAttribute("errorMessage", "This appointment cannot be deleted because it has been reviewed.");
+        } catch (Exception e) {
+            // Diğer beklenmedik hatalar için genel bir mesaj.
+            // Hata loglaması yapmak iyi bir pratik olacaktır.
+            // log.error("Error deleting appointment with id {}: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred while trying to delete the appointment.");
+        }
+
+        return "redirect:/veterinary/appointments";
     }
+
 
     // AJAX endpoint for admin/appointments might still use this. Not strictly needed for vet's own page if vet is fixed.
     @GetMapping(value = "/veterinaries-by-clinic/{clinicId}", produces = "application/json")

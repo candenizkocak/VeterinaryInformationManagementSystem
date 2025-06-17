@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Import ekleyin
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,9 +106,21 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.save(existing);
     }
 
+    /*
     @Override
     public void deleteAppointment(Long id) {
         appointmentRepository.deleteById(id);
+    }*/
+
+    @Override
+    public void deleteAppointment(Long id) {
+        try {
+            appointmentRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            // Veritabanı bütünlük hatası yakalandı. Bu genellikle bir foreign key kısıtlamasından kaynaklanır.
+            // Daha spesifik bir istisna fırlatarak Controller'ın bunu anlamasını sağlıyoruz.
+            throw new IllegalStateException("Cannot delete an appointment that has been reviewed or is referenced by other records.");
+        }
     }
 
     @Override

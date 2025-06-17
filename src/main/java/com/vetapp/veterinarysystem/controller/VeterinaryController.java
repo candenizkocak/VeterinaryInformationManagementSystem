@@ -51,9 +51,10 @@ public class VeterinaryController {
     private final VeterinaryRepository veterinaryRepository; // Eklendi
     private final UserService userService;
     private final ReviewService reviewService; // ReviewService'i ekle
+    private final MedicalRecordService medicalRecordService;
 
 
-    public VeterinaryController(VeterinaryService veterinaryService, AppointmentService appointmentService, PetService petService, VaccinationService vaccinationService, VaccineTypeService vaccineTypeService, SurgeryTypeService surgeryTypeService, SurgeryService surgeryService, VeterinaryRepository veterinaryRepository, UserService userService, ReviewService reviewService) {
+    public VeterinaryController(VeterinaryService veterinaryService, AppointmentService appointmentService, PetService petService, VaccinationService vaccinationService, VaccineTypeService vaccineTypeService, SurgeryTypeService surgeryTypeService, SurgeryService surgeryService, VeterinaryRepository veterinaryRepository, UserService userService, ReviewService reviewService, MedicalRecordService medicalRecordService) {
         this.veterinaryService = veterinaryService;
         this.appointmentService = appointmentService;
         this.petService = petService;
@@ -64,6 +65,7 @@ public class VeterinaryController {
         this.veterinaryRepository = veterinaryRepository;
         this.userService = userService;
         this.reviewService = reviewService;
+        this.medicalRecordService = medicalRecordService;
     }
 
     /*
@@ -451,6 +453,64 @@ public class VeterinaryController {
         model.addAttribute("totalReviews", reviews.size());
 
         return "veterinary/my_reviews";
+    }
+
+
+
+
+
+    //MEDICAL RECORDS
+
+    @GetMapping("/appointments/{appointmentId}/medical-records")
+    public String manageMedicalRecords(@PathVariable Long appointmentId, Model model, RedirectAttributes redirectAttributes) {
+        Appointment appointment = appointmentService.getAppointmentById(appointmentId);
+        if (appointment == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Appointment not found.");
+            return "redirect:/veterinary/appointments";
+        }
+
+        List<MedicalRecord> records = medicalRecordService.getMedicalRecordsByPetId(appointment.getPet().getPetID());
+
+        model.addAttribute("appointment", appointment);
+        model.addAttribute("records", records);
+        model.addAttribute("newRecord", new MedicalRecord());
+        // Bu, oluşturulacak yeni JSP sayfasıdır.
+        return "veterinary/manage_appointment_medical_records";
+    }
+
+    @PostMapping("/appointments/medical-records/add")
+    public String addMedicalRecord(@RequestParam Long appointmentId,
+                                   @RequestParam String description, // Diagnosis alanı
+                                   @RequestParam String treatment,
+                                   @RequestParam("date") String date, // RecordDate alanı
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            Appointment appointment = appointmentService.getAppointmentById(appointmentId);
+            MedicalRecord newRecord = new MedicalRecord();
+            newRecord.setPet(appointment.getPet());
+            newRecord.setVeterinary(appointment.getVeterinary());
+            newRecord.setDescription(description);
+            newRecord.setTreatment(treatment);
+            newRecord.setDate(LocalDate.parse(date));
+
+            medicalRecordService.saveMedicalRecord(newRecord);
+            redirectAttributes.addFlashAttribute("successMessage", "Medical record added successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error adding medical record: " + e.getMessage());
+        }
+
+        return "redirect:/veterinary/appointments/" + appointmentId + "/medical-records";
+    }
+
+    @PostMapping("/appointments/medical-records/delete/{recordId}")
+    public String deleteMedicalRecord(@PathVariable Long recordId, @RequestParam Long appointmentId, RedirectAttributes redirectAttributes) {
+        try {
+            medicalRecordService.deleteMedicalRecord(recordId);
+            redirectAttributes.addFlashAttribute("successMessage", "Medical record deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting medical record: " + e.getMessage());
+        }
+        return "redirect:/veterinary/appointments/" + appointmentId + "/medical-records";
     }
 
 

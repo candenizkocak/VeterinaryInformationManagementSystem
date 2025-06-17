@@ -197,6 +197,10 @@
                         Surgeries
                     </a>
 
+                    <a href="${pageContext.request.contextPath}/veterinary/appointments/${appt.appointmentId}/medical-records" class="btn btn-sm btn-Info">
+                        Medical Records
+                    </a>
+
                     <form action="/veterinary/appointments/delete/${appt.appointmentId}" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
@@ -208,32 +212,39 @@
     </table>
 </div>
 
+
+<%-- SAYFANIN EN ALTINDAKİ TÜM <script> ... </script> BLOĞUNU BUNUNLA DEĞİŞTİRİN --%>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
     $(document).ready(function () {
+        // DataTable başlatma
         $('#appointmentTable').DataTable({
             pageLength: 10,
             lengthMenu: [5, 10, 25, 50, 100],
             columnDefs: [ { orderable: false, targets: -1 } ]
         });
 
+        // Form elemanlarını jQuery nesneleri olarak seçme
         const clinicSelect = $('#clinicSelect');
-        const dateInput = $('#appointmentDateInput');
+        const dateInput = $('#appointmentDateInput'); // 'dateInput' burada tanımlanıyor.
         const timeSelect = $('#appointmentTimeSelect');
-        const combinedDateTimeInput = $('#appointmentDateTimeCombined'); // Hidden input
+        const combinedDateTimeInput = $('#appointmentDateTimeCombined');
+
+        // --- TARİH KONTROLÜ ---
+        // 'dateInput' değişkenini kullanarak 'min' özelliğini ayarla.
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.attr('min', today);
+        // --- BİTTİ ---
 
         function fetchAvailableSlots() {
             const clinicId = clinicSelect.val();
             const selectedDate = dateInput.val();
 
             if (clinicId && selectedDate) {
-                // Veteriner ID'si principal'dan controller'da alınacak, buraya göndermeye gerek yok
-                // const veterinaryId = $('input[name="veterinary.veterinaryId"]').val(); // Eğer JSP'de varsa
-
-                timeSelect.empty().append('<option value="">Loading...</option>'); // Clear and show loading
+                timeSelect.empty().append('<option value="">Loading...</option>');
 
                 $.ajax({
                     url: '${pageContext.request.contextPath}/veterinary/appointments/available-slots',
@@ -241,10 +252,9 @@
                     data: {
                         clinicId: clinicId,
                         date: selectedDate
-                        // veterinaryId: veterinaryId // Controller principal'dan alacak
                     },
                     success: function(slots) {
-                        timeSelect.empty(); // Clear loading/previous options
+                        timeSelect.empty();
                         if (slots && slots.length > 0) {
                             slots.forEach(function(slot) {
                                 timeSelect.append($('<option>', {
@@ -252,16 +262,15 @@
                                     text: slot
                                 }));
                             });
-                            // Eğer düzenleme modundaysak ve seçili bir saat varsa onu seçili yap
-                            const initialTime = "${not empty appointment.appointmentDate ? appointment.appointmentDate.toLocalTime().format(DateTimeFormatter.ofPattern('HH:mm')) : ''}";
+                            // Düzenleme modunda ilk değeri seçili yap
+                            const initialTime = "${not empty appointment.appointmentDate ? appointment.appointmentDate.toLocalTime().format(java.time.format.DateTimeFormatter.ofPattern('HH:mm')) : ''}";
                             if (initialTime) {
                                 timeSelect.val(initialTime);
                             }
-
                         } else {
                             timeSelect.append('<option value="">No slots available</option>');
                         }
-                        updateCombinedDateTime(); // Saati seçtikten sonra da güncelle
+                        updateCombinedDateTime();
                     },
                     error: function() {
                         timeSelect.empty().append('<option value="">Error loading slots</option>');
@@ -274,43 +283,36 @@
             }
         }
 
-        // Tarih veya Klinik değiştiğinde saatleri getir
-        clinicSelect.on('change', fetchAvailableSlots);
-        dateInput.on('change', fetchAvailableSlots);
-
-        // Saat seçimi değiştiğinde birleşik değeri güncelle
-        timeSelect.on('change', updateCombinedDateTime);
-
-        // Birleşik tarih-saat değerini hidden input'a set et
         function updateCombinedDateTime() {
             const selectedDate = dateInput.val();
             const selectedTime = timeSelect.val();
 
             if (selectedDate && selectedTime) {
-                combinedDateTimeInput.val(selectedDate + 'T' + selectedTime + ':00'); // ISO 8601 formatına yakın (saniye eksik)
-                                                                                    // Controller bunu LocalDateTime'a parse edebilmeli
+                combinedDateTimeInput.val(selectedDate + 'T' + selectedTime + ':00');
             } else {
                 combinedDateTimeInput.val('');
             }
         }
 
-        // Sayfa yüklendiğinde, eğer düzenleme modundaysak ve tarih/klinik seçiliyse saatleri getir
+        // Event Listeners
+        clinicSelect.on('change', fetchAvailableSlots);
+        dateInput.on('change', fetchAvailableSlots);
+        timeSelect.on('change', updateCombinedDateTime);
+
+        // Sayfa yüklendiğinde ilk durumu kontrol et
         if (dateInput.val() && clinicSelect.val()) {
             fetchAvailableSlots();
         }
 
-
-        // Form gönderilmeden önce birleşik değeri güncelle
-        $('#appointmentForm').on('submit', function() {
+        // Form gönderimini kontrol et
+        $('#appointmentForm').on('submit', function(e) {
             updateCombinedDateTime();
-            // Eğer combinedDateTimeInput boşsa ve tarih/saat zorunluysa formu göndermeyi engelle
             if (!combinedDateTimeInput.val() && dateInput.prop('required') && timeSelect.prop('required')) {
-                alert('Please select a date and time.');
-                return false; // Formu gönderme
+                alert('Please select a valid date and time.');
+                e.preventDefault(); // Formu göndermeyi engelle
             }
         });
     });
-    // Tema script (mevcut olan)
 </script>
 </body>
 </html>
