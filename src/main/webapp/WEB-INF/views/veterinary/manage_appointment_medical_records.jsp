@@ -4,8 +4,7 @@
 
 <head>
     <title>Manage Medical Records</title>
-    <jsp:include page="../navbar.jsp"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <jsp:include page="../client/navbar.jsp"/>    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
     <style>

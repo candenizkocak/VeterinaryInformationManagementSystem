@@ -2,42 +2,100 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Veterinary System</title>
-
-    <!-- STYLES -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <title>Welcome to PetPoint Veterinary System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <!-- Theme CSS (Genel Tema ve Navbar Stilleri) -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
-
-    <!-- SCRIPTS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Custom Home Page CSS (Bu sayfaya özel stiller) -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/home_custom.css">
 </head>
-<body class="bg-dark text-white">
+<body id="pageBody"> <%-- Tema scriptinin çalışması için id="pageBody" önemli --%>
 
+<%-- NAVBAR: HER ZAMAN CLIENT NAVBAR'INI KULLAN --%>
+<jsp:include page="client/navbar.jsp"/>
+
+<%-- ANA SAYFA İÇERİĞİ --%>
 <c:choose>
-    <c:when test="${sessionScope.role == 'ROLE_CLIENT'}">
-        <%-- Client rolündeki kullanıcılar için client klasöründeki navbar'ı dahil et --%>
-        <jsp:include page="client/navbar.jsp"/>
+    <%-- KULLANICI GİRİŞ YAPMAMIŞSA MODERN ANA SAYFAYI GÖSTER --%>
+    <c:when test="${empty sessionScope.role}">
+        <main>
+            <!-- Hero Section -->
+            <section class="hero-section text-center text-white">
+                <div class="container">
+                    <h1 class="hero-title display-4 fw-bold">Your Pet's Health, Our Priority</h1>
+                    <p class="hero-subtitle lead mb-4">
+                        Comprehensive veterinary care at your fingertips. Book appointments, manage records, and connect with trusted professionals.
+                    </p>
+                    <a href="${pageContext.request.contextPath}/signup" class="btn btn-lg btn-primary hero-cta-primary me-2">
+                        <i class="bi bi-person-plus-fill me-2"></i>Sign Up Now
+                    </a>
+                    <a href="${pageContext.request.contextPath}/login" class="btn btn-lg btn-outline-light hero-cta-secondary">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="services-section py-5">
+                <div class="container">
+                    <h2 class="section-title text-center mb-5">Our Services</h2>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="service-card text-center p-4 shadow-sm">
+                                <div class="service-icon mb-3">
+                                    <i class="bi bi-calendar2-check-fill"></i>
+                                </div>
+                                <h3 class="service-title h5">Easy Appointment Booking</h3>
+                                <p class="service-description">Quickly find available slots and book appointments with your preferred vets.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="service-card text-center p-4 shadow-sm">
+                                <div class="service-icon mb-3">
+                                    <i class="bi bi-journal-medical"></i>
+                                </div>
+                                <h3 class="service-title h5">Pet Health Records</h3>
+                                <p class="service-description">Access your pet's complete medical history, vaccinations, and treatments anytime.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="service-card text-center p-4 shadow-sm">
+                                <div class="service-icon mb-3">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <h3 class="service-title h5">Trusted Professionals</h3>
+                                <p class="service-description">Connect with experienced veterinarians and well-equipped clinics.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Call to Action Section -->
+            <section class="cta-section text-center py-5">
+                <div class="container">
+                    <h2 class="section-title mb-3">Ready to Get Started?</h2>
+                    <p class="lead mb-4">Join PetPoint today and give your furry friends the best care.</p>
+                    <a href="${pageContext.request.contextPath}/signup" class="btn btn-lg btn-success cta-button">
+                        <i class="bi bi-heart-pulse-fill me-2"></i> Create Your Account
+                    </a>
+                </div>
+            </section>
+        </main>
     </c:when>
+
+    <%-- KULLANICI GİRİŞ YAPMIŞSA MEVCUT PANELİ GÖSTER --%>
     <c:otherwise>
-        <%-- Diğer roller (Admin, Veterinary, Clinic) ve giriş yapmamış kullanıcılar için varsayılan navbar'ı dahil et --%>
-        <jsp:include page="navbar.jsp"/>
-    </c:otherwise>
-</c:choose>
-<%-- SON: DEĞİŞTİRİLMİŞ KOD --%>
-
-<div class="container mt-5">
-
-    <c:choose>
-        <c:when test="${not empty sessionScope.role}">
+        <div class="container mt-5">
             <h1 class="mb-4 text-center">Welcome to Veterinary Information System</h1>
 
             <c:choose>
                 <c:when test="${sessionScope.role == 'ROLE_ADMIN'}">
-                    <div class="card bg-secondary text-white mb-3">
+                    <div class="card bg-secondary text-white mb-3"> <%-- Temaya göre bu class'lar değişebilir --%>
                         <div class="card-header">Admin Panel</div>
                         <div class="card-body">
                             <a href="/admin/users" class="btn btn-light me-2">Manage Users</a>
@@ -74,7 +132,7 @@
                                     <span style="font-size:2.2em;">🐶</span>
                                     <span class="fw-semibold mt-2">Add Animal</span>
                                 </a>
-                                <a href="/api/clients/our-clinics" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;"> <%-- <--- YENİ EKLENEN BAĞLANTI --%>
+                                <a href="/api/clients/our-clinics" class="btn btn-lg btn-light shadow rounded-4 px-4 py-3 d-flex flex-column align-items-center" style="min-width:150px;">
                                     <span style="font-size:2.2em;">🏥</span>
                                     <span class="fw-semibold mt-2">Our Clinics</span>
                                 </a>
@@ -82,139 +140,40 @@
                         </div>
                     </div>
                 </c:when>
-
-
                 <c:when test="${sessionScope.role == 'ROLE_VETERINARY'}">
                     <div class="alert alert-success text-center border-0" style="background-color: #d1e7dd;">
-                            <h4 class="mb-4">Welcome to the Veterinary Panel</h4>
-
-                            <%-- Kutuları yan yana hizalamak için bir container --%>
-                            <div class="d-flex justify-content-center align-items-stretch gap-4">
-
-                                <%-- 1. My Appointments Kutusu --%>
-                                <a href="${pageContext.request.contextPath}/veterinary/appointments"
-                                   class="btn btn-lg btn-light shadow-sm rounded-4 px-4 py-3 d-flex flex-column align-items-center text-decoration-none"
-                                   style="min-width: 180px; transition: all 0.2s ease-in-out;">
-                                    <span style="font-size: 2.5em; line-height: 1;">📅</span>
-                                    <span class="fw-semibold mt-2">Appointments</span>
-                                </a>
-
-                                <%-- 2. My Reviews Kutusu (YENİ EKLENDİ) --%>
-                                <a href="${pageContext.request.contextPath}/veterinary/reviews"
-                                   class="btn btn-lg btn-light shadow-sm rounded-4 px-4 py-3 d-flex flex-column align-items-center text-decoration-none"
-                                   style="min-width: 180px; transition: all 0.2s ease-in-out;">
-                                    <span style="font-size: 2.5em; line-height: 1;">⭐</span>
-                                    <span class="fw-semibold mt-2">Reviews</span>
-                                </a>
-
-                            </div>
+                        <h4 class="mb-4">Welcome to the Veterinary Panel</h4>
+                        <div class="d-flex justify-content-center align-items-stretch gap-4">
+                            <a href="${pageContext.request.contextPath}/veterinary/appointments"
+                               class="btn btn-lg btn-light shadow-sm rounded-4 px-4 py-3 d-flex flex-column align-items-center text-decoration-none"
+                               style="min-width: 180px; transition: all 0.2s ease-in-out;">
+                                <span style="font-size: 2.5em; line-height: 1;">📅</span>
+                                <span class="fw-semibold mt-2">Appointments</span>
+                            </a>
+                            <a href="${pageContext.request.contextPath}/veterinary/reviews"
+                               class="btn btn-lg btn-light shadow-sm rounded-4 px-4 py-3 d-flex flex-column align-items-center text-decoration-none"
+                               style="min-width: 180px; transition: all 0.2s ease-in-out;">
+                                <span style="font-size: 2.5em; line-height: 1;">⭐</span>
+                                <span class="fw-semibold mt-2">Reviews</span>
+                            </a>
                         </div>
+                    </div>
                 </c:when>
-
                 <c:when test="${sessionScope.role == 'ROLE_CLINIC'}">
                     <jsp:include page="clinic/dashboard.jsp"/>
                 </c:when>
             </c:choose>
-        </c:when>
+        </div>
+    </c:otherwise>
+</c:choose>
 
-        <c:otherwise>
-            <section class="text-center">
-                <h1 class="mb-4">Welcome to Our Veterinary System</h1>
-                <p class="mb-4">Explore information about pets and clinics below.</p>
-                <a href="#pets" class="btn btn-primary me-2">Explore Pets</a>
-                <a href="#clinics" class="btn btn-success">Find Clinics</a>
-            </section>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables (gerekliyse, bazı panellerde kullanılıyor olabilir) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-            <section id="pets" class="text-white py-5">
-                <h2 class="text-center mb-4">Pet Types</h2>
 
-                <div id="petSelectArea" class="position-relative mx-auto">
-                    <div id="petTypeContainer" class="transition mb-3">
-                        <label for="petType" class="form-label">Select Pet Type</label>
-                        <select id="petType" class="form-select">
-                            <option value="">-- Choose --</option>
-                            <option value="dog">Dog</option>
-                            <option value="cat">Cat</option>
-                        </select>
-                    </div>
-
-                    <div id="petBreedContainer" class="transition">
-                        <label for="petBreed" class="form-label">Select Breed</label>
-                        <select id="petBreed" class="form-select" disabled>
-                            <option value="">-- Choose a type first --</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mt-5 text-center" id="breedInfo" style="display: none;">
-                    <h4 class="mb-3">Breed Information</h4>
-                    <p id="breedDescription"></p>
-                </div>
-            </section>
-
-            <section id="clinics" class="bg-secondary text-white py-5">
-                <div class="container">
-                    <h2 class="text-center mb-4">Clinics</h2>
-                    <p class="text-center">Klinik bilgileri ve harita burada olacak 📍</p>
-                </div>
-            </section>
-        </c:otherwise>
-    </c:choose>
-
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const petType = document.getElementById('petType');
-        const petBreed = document.getElementById('petBreed');
-        const breedInfo = document.getElementById('breedInfo');
-        const breedDescription = document.getElementById('breedDescription');
-        const wrapper = document.getElementById('petSelectArea');
-
-        const breedsData = {
-            dog: {
-                "Golden Retriever": "Friendly, intelligent, and devoted. Avg weight: 30–34 kg.",
-                "German Shepherd": "Confident, courageous, and smart. Avg weight: 30–40 kg."
-            },
-            cat: {
-                "British Shorthair": "Easygoing, affectionate. Avg weight: 5–7 kg.",
-                "Siamese": "Vocal, social, and playful. Avg weight: 4–6 kg."
-            }
-        };
-
-        petType.addEventListener('change', () => {
-            const selectedType = petType.value;
-            petBreed.innerHTML = '<option value="">-- Choose --</option>';
-            breedInfo.style.display = "none";
-            wrapper.classList.remove('pets-active');
-
-            if (selectedType && breedsData[selectedType]) {
-                wrapper.classList.add('pets-active');
-                petBreed.disabled = false;
-
-                Object.keys(breedsData[selectedType]).forEach(breed => {
-                    const option = document.createElement('option');
-                    option.value = breed;
-                    option.textContent = breed;
-                    petBreed.appendChild(option);
-                });
-            } else {
-                petBreed.disabled = true;
-            }
-        });
-
-        petBreed.addEventListener('change', () => {
-            const type = petType.value;
-            const breed = petBreed.value;
-
-            if (type && breed && breedsData[type][breed]) {
-                breedInfo.style.display = "block";
-                breedDescription.textContent = breedsData[type][breed];
-            } else {
-                breedInfo.style.display = "none";
-            }
-        });
-    });
-</script>
 </body>
 </html>

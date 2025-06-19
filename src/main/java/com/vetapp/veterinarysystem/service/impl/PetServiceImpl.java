@@ -4,8 +4,10 @@ import com.vetapp.veterinarysystem.model.*;
 import com.vetapp.veterinarysystem.repository.*;
 import com.vetapp.veterinarysystem.service.MedicalRecordService;
 import com.vetapp.veterinarysystem.service.PetService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -19,8 +21,45 @@ public class PetServiceImpl implements PetService {
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
     private final GenderRepository genderRepository;
-    private final MedicalRecordService medicalRecordService;
+    private final MedicalRecordRepository medicalRecordRepository;
     private final AppointmentRepository appointmentRepository;
+
+
+
+    @Override
+    @Transactional
+    public void deletePet(int id) {
+        Pet petToDelete = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet not found with ID: " + id));
+
+
+        if (appointmentRepository.existsByPet_PetID(id)) {
+
+            throw new DataIntegrityViolationException("This pet has existing appointments and cannot be deleted. Please cancel or reassign appointments first.");
+        }
+
+        petRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deletePetById(int id) {
+        Pet petToDelete = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet not found with ID: " + id));
+
+        if (appointmentRepository.existsByPet_PetID(id)) {
+            throw new DataIntegrityViolationException("This pet has existing appointments and cannot be deleted. Please cancel or reassign appointments first.");
+        }
+
+        List<MedicalRecord> records = medicalRecordRepository.findByPet_PetID((long)id);
+        if (records != null && !records.isEmpty()) {
+            medicalRecordRepository.deleteAll(records);
+        }
+
+        petRepository.delete(petToDelete);
+        System.out.println("Pet and related medical records (if any) deleted: " + id);
+    }
+
 
     @Override
     public List<Pet> getAllPets() {
@@ -40,29 +79,51 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
+    @Transactional
     public Pet createPet(Pet pet) {
         setAssociations(pet);
         return petRepository.save(pet);
     }
 
     @Override
+    @Transactional
     public Pet updatePet(Pet pet) {
         setAssociations(pet);
         return petRepository.save(pet);
     }
 
     private void setAssociations(Pet pet) {
-        pet.setClient(clientRepository.findById(pet.getClient().getClientId())
-                .orElseThrow(() -> new RuntimeException("Client not found")));
+
+        if (pet.getClient() != null && pet.getClient().getClientId() != null) {
+            pet.setClient(clientRepository.findById(pet.getClient().getClientId())
+                    .orElseThrow(() -> new RuntimeException("Client not found for ID: " + pet.getClient().getClientId())));
+        } else if (pet.getClient() != null && pet.getClient().getUser() != null && pet.getClient().getUser().getUsername() != null) {
+
+            Client clientByUsername = clientRepository.findByUserUsername(pet.getClient().getUser().getUsername())
+                    .orElseThrow(() -> new RuntimeException("Client not found for username: " + pet.getClient().getUser().getUsername()));
+            pet.setClient(clientByUsername);
+        } else {
+
+            throw new RuntimeException("Client information is missing or invalid for the pet.");
+        }
+
+
         pet.setSpecies(speciesRepository.findById(pet.getSpecies().getSpeciesID())
                 .orElseThrow(() -> new RuntimeException("Species not found")));
         pet.setBreed(breedRepository.findById(pet.getBreed().getBreedID())
                 .orElseThrow(() -> new RuntimeException("Breed not found")));
         pet.setGender(genderRepository.findById(pet.getGender().getGenderID())
                 .orElseThrow(() -> new RuntimeException("Gender not found")));
-        pet.setClinic(clinicRepository.findById(pet.getClinic().getClinicId())
-                .orElseThrow(() -> new RuntimeException("Clinic not found")));
+
+
+        if (pet.getClinic() != null && pet.getClinic().getClinicId() != null) {
+            pet.setClinic(clinicRepository.findById(pet.getClinic().getClinicId())
+                    .orElseThrow(() -> new RuntimeException("Clinic not found for ID: " + pet.getClinic().getClinicId())));
+        } else {
+            pet.setClinic(null);
+        }
     }
+
 
     @Override
     public List<Pet> getPetsByClient(Client client) {
@@ -70,38 +131,14 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public void deletePet(int id) {
-        if (appointmentRepository.existsByPet_PetID(id)) {
-            throw new IllegalStateException("This pet has appointments and cannot be deleted.");
-        }
-
-        petRepository.deleteById(id);
-    }
-
-
-    @Override
     public List<Pet> getPetsByNameContaining(String keyword) {
         return petRepository.findByNameContainingIgnoreCase(keyword);
     }
 
-
     @Override
-    public void deletePetById(int id) {
-        Pet pet = petRepository.findById(id).orElse(null);
-        if (pet != null) {
-            List<MedicalRecord> records = medicalRecordService.getMedicalRecordsByPetId((long) id);
-            for (MedicalRecord record : records) {
-                medicalRecordService.deleteMedicalRecord(record.getMedicalRecordId());
-            }
-            petRepository.delete(pet);
-            System.out.println("Pet and related deleted: " + id);
-        } else {
-            System.out.println("Pet couldn't find " + id);
-        }
-    }
-
-    @Override
+    @Transactional
     public void save(Pet pet) {
+        setAssociations(pet);
         petRepository.save(pet);
     }
 }

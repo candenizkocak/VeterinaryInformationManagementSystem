@@ -1,0 +1,251 @@
+/* src/main/resources/static/css/home_custom.css */
+
+/* Genel Body Ayarları */
+body#pageBody { /* Ensure this ID matches your body tag for theme script */
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.bg-light {
+    background-color: #f8f9fa;
+}
+
+body.bg-dark {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+}
+body.bg-dark .navbar-modern { /* Navbar'ın koyu tema uyumu */
+    background: rgba(33,37,41,0.98) !important; /* Bootstrap dark gibi bir renk */
+    border-bottom: 1px solid #495057;
+}
+body.bg-dark .navbar-modern .navbar-brand {
+    color: #b0cbf7 !important; /* Daha açık mavi */
+}
+body.bg-dark .navbar-modern .navbar-brand i {
+    color: #8bbfff; /* Navbar ikonu için daha açık mavi */
+}
+body.bg-dark .navbar-modern .navbar-nav .nav-link {
+    color: #adb5bd !important; /* Link metin rengi */
+}
+body.bg-dark .navbar-modern .navbar-nav .nav-link:hover,
+body.bg-dark .navbar-modern .navbar-nav .nav-link.active {
+    background: linear-gradient(90deg,#3e454c 0%,#4a5057 100%) !important;
+    color: #e9ecef !important;
+}
+body.bg-dark .navbar-modern .navbar-nav .logout-link {
+    background: linear-gradient(90deg, #c05360 0%, #d9825b 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px 0 rgba(0,0,0,0.2) !important;
+}
+body.bg-dark .navbar-modern .navbar-nav .logout-link:hover {
+    background: #b23e4d !important;
+}
+body.bg-dark .user-avatar {
+    background: linear-gradient(135deg, #5c7e9a 0%, #7d98b3 100%);
+    color: #e0e0e0;
+    border: 2px solid #4b545c;
+}
+body.bg-dark #welcomeUser {
+    color: #ced4da !important; /* Koyu temada kullanıcı adı rengi */
+}
+
+
+
+/* Hero Section */
+.hero-section {
+    /* ÖNEMLİ: 'default-hero-bg.jpg' yerine kendi yüksek çözünürlüklü resminizin adını yazın. */
+    /* Resminiz src/main/resources/static/img/ klasöründe olmalı. */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('../img/Background.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 8rem 0;
+    color: #fff;
+    border-bottom: 5px solid #0d6efd; /* Ana tema mavi */
+}
+body.bg-dark .hero-section {
+    /* Koyu temada overlay veya resim farklı olabilir. Şimdilik aynı resmi kullanıyoruz, overlay biraz daha koyu. */
+    background-image: linear-gradient(rgba(10, 10, 10, 0.55), rgba(10, 10, 10, 0.55)), url('../img/Background.jpg');
+    border-bottom-color: #4a8ee0; /* Koyu tema için daha açık mavi */
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    margin-bottom: 1.5rem;
+    color: #ffffff; /* Açık temada da beyaz kalabilir, overlay sayesinde okunur */
+}
+body.bg-dark .hero-title {
+    color: #f0f8ff; /* Koyu temada çok açık mavi */
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+    color: #f8f9fa; /* Açık temada açık renk */
+}
+body.bg-dark .hero-subtitle {
+    color: #ced4da; /* Koyu temada biraz daha soluk */
+}
+
+.hero-cta-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #fff;
+}
+.hero-cta-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-2px);
+    color: #fff;
+}
+body.bg-dark .hero-cta-primary {
+    background-color: #4a8ee0;
+    border-color: #4a8ee0;
+    color: #1a1a1a; /* Koyu arkaplanda okunurluk için koyu metin */
+}
+body.bg-dark .hero-cta-primary:hover {
+    background-color: #6da7f7;
+    border-color: #6da7f7;
+    color: #1a1a1a;
+}
+
+.hero-cta-secondary {
+    border: 2px solid rgba(255, 255, 255, 0.7); /* Açık tema için beyaz kenarlık */
+    color: rgba(255, 255, 255, 0.9); /* Açık tema için beyaz metin */
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.hero-cta-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+    color: #fff;
+    transform: translateY(-2px);
+}
+body.bg-dark .hero-cta-secondary {
+    border-color: #6da7f7; /* Koyu tema için mavi kenarlık */
+    color: #6da7f7; /* Koyu tema için mavi metin */
+}
+body.bg-dark .hero-cta-secondary:hover {
+    background-color: rgba(109, 167, 247, 0.15);
+    border-color: #8bbfff;
+    color: #8bbfff;
+}
+
+/* Services Section */
+.services-section {
+    background-color: #ffffff;
+}
+body.bg-dark .services-section {
+    background-color: #222529 !important;
+}
+
+.section-title {
+    font-weight: 700;
+    color: #343a40;
+}
+body.bg-dark .section-title {
+    color: #e9ecef !important;
+}
+
+.service-card {
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%; /* Kartların aynı yükseklikte olmasını sağlar */
+}
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+}
+body.bg-dark .service-card {
+    background-color: #2c3034 !important;
+    color: #ced4da;
+}
+body.bg-dark .service-card:hover {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.3) !important;
+}
+body.bg-dark .service-card .service-title {
+    color: #ffffff;
+}
+body.bg-dark .service-card .service-description {
+    color: #adb5bd;
+}
+
+.service-icon i {
+    font-size: 3.5rem;
+    color: #0d6efd;
+}
+body.bg-dark .service-icon i {
+    color: #4a8ee0;
+}
+
+.service-title { /* h5 olduğu için h3 class'ını ezebilir */
+    font-weight: 600 !important;
+    color: #212529 !important;
+    font-size: 1.25rem !important; /* Gerekirse boyutunu ayarlayın */
+}
+
+.service-description {
+    color: #6c757d !important;
+    font-size: 0.95rem !important;
+}
+
+/* Call to Action Section */
+.cta-section {
+    background-color: #e9ecef;
+}
+body.bg-dark .cta-section {
+    background-color: #2c3034 !important;
+}
+
+.cta-button {
+    background-color: #198754;
+    border-color: #198754;
+    padding: 0.8rem 2.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #fff;
+}
+.cta-button:hover {
+    background-color: #157347;
+    border-color: #146c43;
+    color: #fff;
+}
+body.bg-dark .cta-button {
+    background-color: #2aaa6d;
+    border-color: #2aaa6d;
+    color: #1a1a1a;
+}
+body.bg-dark .cta-button:hover {
+    background-color: #32be7a;
+    border-color: #32be7a;
+    color: #1a1a1a;
+}
+
+/* Footer (Opsiyonel) */
+footer.app-footer {
+    padding: 2rem 0;
+    background-color: #343a40;
+    color: #adb5bd;
+    margin-top: 3rem; /* Üstteki bölümle arasına boşluk */
+}
+body.bg-dark footer.app-footer {
+    background-color: #111315;
+}
+footer.app-footer a {
+    color: #ced4da;
+    text-decoration: none;
+}
+footer.app-footer a:hover {
+    color: #fff;
+}

@@ -7,6 +7,7 @@ import com.vetapp.veterinarysystem.repository.ClinicVeterinaryRepository;
 import com.vetapp.veterinarysystem.repository.UserRepository;
 import com.vetapp.veterinarysystem.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -131,10 +132,10 @@ public class ClientController {
             pet.setBreed(breedService.getById(pet.getBreed().getBreedID()));
             pet.setGender(genderService.getById(pet.getGender().getGenderID()));
             petService.save(pet);
-            redirectAttributes.addFlashAttribute("success", true);
+            redirectAttributes.addFlashAttribute("successMessage", "Animal added successfully!"); // successMessage kullandık
             return "redirect:/api/clients/my-animals";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error adding animal: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error adding animal: " + e.getMessage());
             model.addAttribute("pet", pet);
             model.addAttribute("speciesList", speciesService.getAllSpecies());
             model.addAttribute("breedList", breedService.getAllBreeds());
@@ -145,11 +146,31 @@ public class ClientController {
 
     @PostMapping("/delete-animal/{id}")
     public String deleteAnimal(@PathVariable("id") int id, Principal principal, RedirectAttributes redirectAttributes) {
+        if (principal == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You must be logged in to perform this action.");
+            return "redirect:/login";
+        }
         try {
+            Client loggedInClient = getLoggedInClient(principal);
+            Pet petToDelete = petService.getPetById(id);
+
+            if (petToDelete == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Pet not found.");
+                return "redirect:/api/clients/my-animals";
+            }
+
+            if (!petToDelete.getClient().getClientId().equals(loggedInClient.getClientId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to delete this pet.");
+                return "redirect:/api/clients/my-animals";
+            }
+
             petService.deletePetById(id);
             redirectAttributes.addFlashAttribute("successMessage", "Animal deleted successfully!");
+
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting animal: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting animal: An unexpected error occurred.");
         }
         return "redirect:/api/clients/my-animals";
     }
@@ -164,7 +185,7 @@ public class ClientController {
             model.addAttribute("cities", cityService.getAllCities());
             return "client/account_settings";
         } catch (Exception e) {
-            model.addAttribute("error", "Account info could not be loaded: " + e.getMessage());
+            model.addAttribute("errorMessage", "Account info could not be loaded: " + e.getMessage()); // errorMessage kullandık
             return "error";
         }
     }
@@ -175,10 +196,10 @@ public class ClientController {
         try {
             String username = principal.getName();
             clientService.updateAccountSettings(username, dto);
-            redirectAttributes.addFlashAttribute("success", true);
+            redirectAttributes.addFlashAttribute("successMessage", "Account settings updated successfully!"); // successMessage kullandık
             return "redirect:/api/clients/account-settings";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error updating account settings: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating account settings: " + e.getMessage());
             return "redirect:/api/clients/account-settings";
         }
     }
@@ -190,16 +211,18 @@ public class ClientController {
     }
 
     @PostMapping("/change-password")
-    public String processChangePassword(@ModelAttribute("passwordChange") PasswordChangeDto dto, Principal principal, Model model) {
+    public String processChangePassword(@ModelAttribute("passwordChange") PasswordChangeDto dto, Principal principal, Model model, RedirectAttributes redirectAttributes) { // RedirectAttributes eklendi
         if (principal == null) return "redirect:/login";
         String username = principal.getName();
         boolean result = clientService.changePassword(username, dto);
         if (result) {
-            model.addAttribute("success", true);
+            redirectAttributes.addFlashAttribute("successMessage", "Password changed successfully!"); // Flash attribute kullandık
+            return "redirect:/api/clients/account-settings"; // Başarılı olursa hesap ayarlarına yönlendir
         } else {
-            model.addAttribute("error", "Password could not be changed. Please check your current password and try again.");
+            model.addAttribute("passwordChange", dto); // Formu tekrar doldurmak için
+            model.addAttribute("errorMessage", "Password could not be changed. Please check your current password and try again.");
+            return "client/change_password"; // Hata varsa aynı sayfada kal
         }
-        return "client/change_password";
     }
 
     @GetMapping("/appointments")
@@ -231,9 +254,7 @@ public class ClientController {
                                           Model model, Principal principal) {
         Client loggedInClient = getLoggedInClient(principal);
         model.addAttribute("pets", petService.getPetsByClient(loggedInClient));
-
         model.addAttribute("clinics", clinicService.getAllClinicsDto());
-
         model.addAttribute("today", LocalDate.now());
 
         if (preselectedClinicId != null) {
@@ -320,7 +341,6 @@ public class ClientController {
     @GetMapping(value = "/veterinaries-by-clinic-and-date", produces = "application/json")
     @ResponseBody
     public List<VeterinaryDto> getVeterinariesByClinicAndDate(@RequestParam Long clinicId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-
         List<Veterinary> vets = clinicVeterinaryRepository.findVeterinariesByClinicId(clinicId);
         return vets.stream().map(v -> new VeterinaryDto(v.getVeterinaryId(), v.getFirstName(), v.getLastName(), v.getSpecialization(), v.getUser() != null ? v.getUser().getUsername() : "N/A")).collect(Collectors.toList());
     }
@@ -350,13 +370,13 @@ public class ClientController {
     @GetMapping("/our-clinics")
     public String showOurClinics(Model model, Principal principal) {
         if (principal == null) {
-            return "redirect:/login";
+            // SecurityConfig bu sayfaya erişimi permitAll yapacak
+            // Giriş yapmamış kullanıcılar için özel bir durum gerekmiyor,
+            // sayfa normal şekilde yüklenecek.
         }
-
         model.addAttribute("clinics", clinicService.getAllClinicsDto());
         return "client/our_clinics";
     }
-
 
     private List<AppointmentDTO> convertToDtoList(List<Appointment> appointmentList) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
@@ -375,6 +395,7 @@ public class ClientController {
             return dto;
         }).collect(Collectors.toList());
     }
+
     @GetMapping(value = "/clinics", produces = "application/json")
     @ResponseBody
     public List<ClinicDto> getClinicsByDistrictCode(@RequestParam("districtCode") Integer districtCode) {
@@ -386,6 +407,4 @@ public class ClientController {
     public List<ClinicDto> getAllClinicsJson() {
         return clinicService.getAllClinicsDto();
     }
-
-
 }

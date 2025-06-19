@@ -6,18 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-
-    <!-- Genel tema CSS'i (global stiller için) -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/theme.css">
-    <!-- Bu sayfaya özel CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/client/my_animals.css">
-
 </head>
 <body id="pageBody" class="bg-light">
-<jsp:include page="navbar.jsp"/> <%-- Navbar include'u body içine taşındı --%>
+<jsp:include page="navbar.jsp"/>
 
 <div class="container py-4">
-    <%-- Üst Başlık ve Butonlar --%>
     <div class="d-flex align-items-center mb-4">
         <a href="/" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2 rounded-pill px-3 py-2 me-auto">
             <i class="bi bi-arrow-left"></i> Back to Home
@@ -27,6 +22,19 @@
             <i class="bi bi-plus-circle"></i> Add New Animal
         </a>
     </div>
+
+    <c:if test="${not empty successMessage}">
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                ${successMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </c:if>
+    <c:if test="${not empty errorMessage}">
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                ${errorMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </c:if>
 
     <c:choose>
         <c:when test="${not empty pets}">
@@ -48,19 +56,16 @@
                                 </ul>
 
                                 <div class="action-btns mt-4 d-flex flex-column align-items-center gap-3">
-                                    <!-- Vaccinations Button -->
                                     <button class="btn btn-outline-success btn-paw w-100"
                                             data-bs-toggle="modal"
                                             data-bs-target="#vaccinesModal${pet.id}">
                                         <i class="bi bi-shield-plus me-2"></i> Vaccinations
                                     </button>
-                                    <!-- Treatments Button -->
                                     <button class="btn btn-outline-info btn-paw w-100"
                                             data-bs-toggle="modal"
                                             data-bs-target="#treatmentsModal${pet.id}">
                                         <i class="bi bi-bandaid me-2"></i> Treatments
                                     </button>
-                                    <!-- Diagnoses Button -->
                                     <button class="btn btn-outline-warning btn-paw w-100"
                                             data-bs-toggle="modal"
                                             data-bs-target="#diagnosesModal${pet.id}">
@@ -68,9 +73,9 @@
                                     </button>
                                     <form action="${pageContext.request.contextPath}/api/clients/delete-animal/${pet.id}" method="post"
                                           class="w-100"
-                                          onsubmit="return confirm('Are you sure you want to delete this animal?');">
+                                          onsubmit="return confirm('Are you sure you want to delete ${pet.name}? This action cannot be undone.');">
                                         <button type="submit" class="btn btn-danger btn-paw w-100">
-                                            <i class="bi bi-trash me-2"></i> Delete
+                                            <i class="bi bi-trash me-2"></i> Delete ${pet.name}
                                         </button>
                                     </form>
                                 </div>
@@ -78,8 +83,6 @@
                         </div>
                     </div>
 
-                    <!-- Modals (Updated for theme.css changes) -->
-                    <!-- Vaccinations Modal -->
                     <div class="modal fade" id="vaccinesModal${pet.id}" tabindex="-1" aria-labelledby="vaccinesModalLabel${pet.id}" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
@@ -137,7 +140,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Treatments Modal -->
                     <div class="modal fade" id="treatmentsModal${pet.id}" tabindex="-1" aria-labelledby="treatmentsModalLabel${pet.id}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -169,7 +171,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Diagnoses Modal -->
                     <div class="modal fade" id="diagnosesModal${pet.id}" tabindex="-1" aria-labelledby="diagnosesModalLabel${pet.id}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -220,12 +221,9 @@
     </c:choose>
 </div>
 
-<!-- JS -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    // Card Entrance Animation (Staggered Fade-in)
     document.addEventListener("DOMContentLoaded", () => {
         const cards = document.querySelectorAll('.stagger-in-item');
         cards.forEach((card, index) => {
@@ -237,7 +235,6 @@
         });
     });
 
-    // Theme script (from navbar.jsp, ensure consistency across Client module)
     const themeToggleSwitch = document.getElementById('themeToggleSwitch');
     const body = document.getElementById('pageBody');
     const navbar = document.getElementById('mainNavbar');

@@ -12,8 +12,7 @@
 </head>
 <body id="pageBody">
 
-<jsp:include page="../navbar.jsp"/>
-
+<jsp:include page="../client/navbar.jsp"/>
 <div class="container mt-5">
     <h2 class="mb-4">Inventory for ${clinic.clinicName}</h2>
 
