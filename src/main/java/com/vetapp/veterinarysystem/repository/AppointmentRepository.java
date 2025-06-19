@@ -11,6 +11,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByVeterinary_VeterinaryId(Long veterinaryId);
     List<Appointment> findByClinic_ClinicId(Long clinicId);
     List<Appointment> findByPet_PetID(Long petID);
+    boolean existsByPet_PetID(int petID);
 
     @Query("SELECT a FROM Appointment a " +
             "JOIN FETCH a.pet p " +
