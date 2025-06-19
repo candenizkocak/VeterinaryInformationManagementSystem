@@ -20,6 +20,7 @@ public class PetServiceImpl implements PetService {
     private final BreedRepository breedRepository;
     private final GenderRepository genderRepository;
     private final MedicalRecordService medicalRecordService;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public List<Pet> getAllPets() {
@@ -70,8 +71,13 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public void deletePet(int id) {
+        if (appointmentRepository.existsByPet_PetID(id)) {
+            throw new IllegalStateException("This pet has appointments and cannot be deleted.");
+        }
+
         petRepository.deleteById(id);
     }
+
 
     @Override
     public List<Pet> getPetsByNameContaining(String keyword) {
@@ -88,9 +94,9 @@ public class PetServiceImpl implements PetService {
                 medicalRecordService.deleteMedicalRecord(record.getMedicalRecordId());
             }
             petRepository.delete(pet);
-            System.out.println("Pet ve ilişkili kayıtlar silindi: " + id);
+            System.out.println("Pet and related deleted: " + id);
         } else {
-            System.out.println("Pet bulunamadı: " + id);
+            System.out.println("Pet couldn't find " + id);
         }
     }
 

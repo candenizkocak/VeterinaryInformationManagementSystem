@@ -2,6 +2,7 @@ package com.vetapp.veterinarysystem.service;
 
 import com.vetapp.veterinarysystem.dto.*;
 import com.vetapp.veterinarysystem.model.Client;
+import com.vetapp.veterinarysystem.model.User;
 
 import java.util.List;
 
@@ -22,5 +23,7 @@ public interface ClientService {
 
     boolean changePassword(String username, PasswordChangeDto dto);
 
+    boolean existsByUser(User user);
+    void deleteByUser(User user);
 
 }

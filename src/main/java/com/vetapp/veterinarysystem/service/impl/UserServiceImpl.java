@@ -1,8 +1,10 @@
 package com.vetapp.veterinarysystem.service.impl;
 
 import com.vetapp.veterinarysystem.model.User;
+import com.vetapp.veterinarysystem.repository.ClientRepository;
 import com.vetapp.veterinarysystem.repository.UserRepository;
 import com.vetapp.veterinarysystem.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, ClientRepository clientRepository) {
         this.userRepository = userRepository;
+        this.clientRepository = clientRepository;
     }
 
     @Override
@@ -49,7 +53,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (clientRepository.existsByUser(user)) {
+            clientRepository.deleteByUser(user);
+        }
+        userRepository.delete(user);
     }
+
 }

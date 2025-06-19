@@ -1,7 +1,9 @@
 package com.vetapp.veterinarysystem.controller;
 
 import com.vetapp.veterinarysystem.model.User;
+import com.vetapp.veterinarysystem.service.ClientService;
 import com.vetapp.veterinarysystem.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ClientService clientService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ClientService clientService) {
         this.userService = userService;
+        this.clientService = clientService;
     }
 
     @GetMapping
@@ -37,7 +41,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+
+        if (clientService.existsByUser(user)) {
+            clientService.deleteByUser(user);
+        }
+
         userService.deleteUser(id);
+        return ResponseEntity.ok().build();
     }
 }

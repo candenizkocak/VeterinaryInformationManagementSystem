@@ -383,4 +383,16 @@ public class ClientServiceImpl implements ClientService {
         }
         return addressBuilder.toString();
     }
+
+    @Override
+    public boolean existsByUser(User user) {
+        return clientRepository.existsByUser(user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUser(User user) {
+        clientRepository.deleteByUser(user);
+    }
+
 }
